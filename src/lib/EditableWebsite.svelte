@@ -404,7 +404,7 @@
 				</svg>
 			</Button>
 
-			{#if dev}
+			{#if dev || handle === 'flo-bit.dev'}
 				<Button
 					size="iconLg"
 					variant="ghost"
