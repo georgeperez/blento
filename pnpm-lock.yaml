@@ -20,6 +20,9 @@ importers:
       '@atproto/common-web':
         specifier: ^0.4.2
         version: 0.4.2
+      '@foxui/colors':
+        specifier: ^0.4.7
+        version: 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
       '@foxui/core':
         specifier: ^0.4.7
         version: 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
@@ -601,6 +604,12 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==, tarball: https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.10.tgz}
 
+  '@foxui/colors@0.4.7':
+    resolution: {integrity: sha512-P40GBuwerikysWctVL1KSUrjxzlAf5j1jZ0z6+pzkWdfTv8wGxXlJcvJCkA1MkTeatLkyBrHLrIF17u2iRrMkw==, tarball: https://registry.npmjs.org/@foxui/colors/-/colors-0.4.7.tgz}
+    peerDependencies:
+      svelte: '>=5'
+      tailwindcss: '>=3'
+
   '@foxui/core@0.4.7':
     resolution: {integrity: sha512-/J31Zra1Jlfn2HeLqKj7q2LmZoDc5pPEZU1SMrLYpJuv3QN+rl9qzAal0gwjGbhgNA/jAk7P2jqTgF4adngMkw==, tarball: https://registry.npmjs.org/@foxui/core/-/core-0.4.7.tgz}
     peerDependencies:
@@ -1062,6 +1071,9 @@ packages:
     resolution: {integrity: sha512-FE1stRoqdHSb7RxesMfCXE8icwI1W6zGE/512ae3ZDrpkQYTTYeSyUJPRCjZd8CwVAhpDUbi1YR8pcZioFJQ/w==, tarball: https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.1.5.tgz}
     peerDependencies:
       vite: ^5.2.0 || ^6
+
+  '@texel/color@1.1.11':
+    resolution: {integrity: sha512-/3kKgfBqzrRfLl4RsEccx+Yfj1kVL6Bh6DejVWZ+DPg/jJdcfdYZ5fpD1nXFwWd8OQNATjz+WqsfQfUynSsgRg==, tarball: https://registry.npmjs.org/@texel/color/-/color-1.1.11.tgz}
 
   '@tiptap/core@2.12.0':
     resolution: {integrity: sha512-3qX8oGVKFFZzQ0vit+ZolR6AJIATBzmEmjAA0llFhWk4vf3v64p1YcXcJsOBsr5scizJu5L6RYWEFatFwqckRg==, tarball: https://registry.npmjs.org/@tiptap/core/-/core-2.12.0.tgz}
@@ -3075,6 +3087,15 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
+  '@foxui/colors@0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)':
+    dependencies:
+      '@foxui/core': 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
+      '@texel/color': 1.1.11
+      '@use-gesture/vanilla': 10.3.1
+      bits-ui: 1.8.0(svelte@5.45.8)
+      svelte: 5.45.8
+      tailwindcss: 4.1.5
+
   '@foxui/core@0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)':
     dependencies:
       '@number-flow/svelte': 0.3.9(svelte@5.45.8)
@@ -3485,6 +3506,8 @@ snapshots:
       '@tailwindcss/oxide': 4.1.5
       tailwindcss: 4.1.5
       vite: 6.3.5(jiti@2.4.2)(lightningcss@1.29.2)
+
+  '@texel/color@1.1.11': {}
 
   '@tiptap/core@2.12.0(@tiptap/pm@2.12.0)':
     dependencies:

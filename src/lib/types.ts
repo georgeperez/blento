@@ -13,6 +13,8 @@ export type Item = {
 
 	cardType: string;
 
+	color?: string;
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	cardData: any;
 

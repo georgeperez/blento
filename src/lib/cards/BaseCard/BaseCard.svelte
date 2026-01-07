@@ -5,6 +5,12 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 
+	const colors = {
+		'base': 'border-base-200 bg-base-50 dark:border-base-800 dark:bg-base-900 border',
+		'accent': 'border-accent-200 bg-accent-50 dark:border-accent-900/50 dark:bg-accent-950/50 border',
+		'transparent': ''
+	} as Record<string, string>;
+
 	export type BaseCardProps = {
 		item: Item;
 		controls?: Snippet<[]>;
@@ -27,7 +33,9 @@
 	bind:this={ref}
 	draggable={isEditing}
 	class={[
-		'card border-base-200 bg-base-50 group dark:border-base-800 dark:bg-base-900 focus-within:outline-accent-500 absolute z-0 rounded-2xl border outline-offset-2 focus-within:outline-2'
+		'card group focus-within:outline-accent-500 absolute z-0 rounded-2xl outline-offset-2 focus-within:outline-2',
+		item.color ? colors[item.color] ?? colors.accent : colors.base,
+		item.color !== 'accent' && item.color !== 'base' && item.color !== 'transparent' ? item.color : ''
 	]}
 	style={`
     --mx: ${item.mobileX};

@@ -1,10 +1,34 @@
 <script lang="ts">
 	import type { WithElementRef } from 'bits-ui';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import Card from './BaseCard.svelte';
+	import BaseCard from './BaseCard.svelte';
 	import type { Item } from '$lib/types';
-	import { Button } from '@foxui/core';
+	import { Button, Popover } from '@foxui/core';
 	import { getCanEdit } from '$lib/helper';
+	import { ColorSelect } from '@foxui/colors';
+
+	let colorsChoices = [
+		{ class: 'text-base-500', label: 'base' },
+		{ class: 'text-accent-500', label: 'accent' },
+		{ class: 'text-base-300 dark:text-base-700', label: 'transparent' },
+		{ class: 'text-red-500', label: 'red' },
+		{ class: 'text-orange-500', label: 'orange' },
+		{ class: 'text-amber-500', label: 'amber' },
+		{ class: 'text-yellow-500', label: 'yellow' },
+		{ class: 'text-lime-500', label: 'lime' },
+		{ class: 'text-green-500', label: 'green' },
+		{ class: 'text-emerald-500', label: 'emerald' },
+		{ class: 'text-teal-500', label: 'teal' },
+		{ class: 'text-cyan-500', label: 'cyan' },
+		{ class: 'text-sky-500', label: 'sky' },
+		{ class: 'text-blue-500', label: 'blue' },
+		{ class: 'text-indigo-500', label: 'indigo' },
+		{ class: 'text-violet-500', label: 'violet' },
+		{ class: 'text-purple-500', label: 'purple' },
+		{ class: 'text-fuchsia-500', label: 'fuchsia' },
+		{ class: 'text-pink-500', label: 'pink' },
+		{ class: 'text-rose-500', label: 'rose' }
+	];
 
 	export type BaseEditingCardProps = {
 		item: Item;
@@ -23,10 +47,16 @@
 		...rest
 	}: BaseEditingCardProps = $props();
 
+	let selectedColor = $derived(
+		!item.color ? colorsChoices[0] : colorsChoices.find((c) => item.color === c.label)
+	);
+
 	let canEdit = getCanEdit();
+
+	let colorPopoverOpen = $state(false);
 </script>
 
-<Card {item} {...rest} isEditing={true} bind:ref>
+<BaseCard {item} {...rest} isEditing={true} bind:ref>
 	{@render children?.()}
 
 	{#snippet controls()}
@@ -58,11 +88,53 @@
 			</Button>
 
 			<div
-				class="absolute -bottom-7 z-50 hidden w-full items-center justify-center text-xs group-focus-within:inline-flex group-hover:inline-flex"
+				class={[
+					'absolute -bottom-7 z-50 w-full items-center justify-center text-xs group-focus-within:inline-flex group-hover:inline-flex',
+					colorPopoverOpen ? 'inline-flex' : 'hidden'
+				]}
 			>
 				<div
-					class="bg-base-100 border-base-200 dark:bg-base-800 dark:border-base-700 inline-flex gap-0.5 rounded-2xl border p-1 px-2 shadow-lg"
+					class="bg-base-100 border-base-200 dark:bg-base-800 dark:border-base-700 inline-flex items-center gap-0.5 rounded-2xl border p-1 px-2 shadow-lg"
 				>
+					<Popover bind:open={colorPopoverOpen}>
+						{#snippet child({ props })}
+							<button
+								{...props}
+								class={[
+									'm-2 size-4 cursor-pointer rounded-full',
+									!item.color || item.color === 'base' || item.color === 'transparent'
+										? 'text-base-800 dark:text-base-200'
+										: 'text-accent-500'
+								]}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									class="size-4"
+								>
+									<path
+										fill-rule="evenodd"
+										d="M20.599 1.5c-.376 0-.743.111-1.055.32l-5.08 3.385a18.747 18.747 0 0 0-3.471 2.987 10.04 10.04 0 0 1 4.815 4.815 18.748 18.748 0 0 0 2.987-3.472l3.386-5.079A1.902 1.902 0 0 0 20.599 1.5Zm-8.3 14.025a18.76 18.76 0 0 0 1.896-1.207 8.026 8.026 0 0 0-4.513-4.513A18.75 18.75 0 0 0 8.475 11.7l-.278.5a5.26 5.26 0 0 1 3.601 3.602l.502-.278ZM6.75 13.5A3.75 3.75 0 0 0 3 17.25a1.5 1.5 0 0 1-1.601 1.497.75.75 0 0 0-.7 1.123 5.25 5.25 0 0 0 9.8-2.62 3.75 3.75 0 0 0-3.75-3.75Z"
+										clip-rule="evenodd"
+									/>
+								</svg>
+							</button>
+						{/snippet}
+						<ColorSelect
+							selected={selectedColor}
+							colors={colorsChoices}
+							onselected={(color, previous) => {
+								if (typeof previous === 'string' || typeof color === 'string') {
+									return;
+								}
+
+								item.color = color.label;
+							}}
+							class="w-64"
+						/>
+					</Popover>
+
 					<button
 						onclick={() => {
 							onsetsize?.(1, 1);
@@ -138,4 +210,4 @@
 			</div>
 		{/if}
 	{/snippet}
-</Card>
+</BaseCard>

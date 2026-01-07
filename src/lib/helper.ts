@@ -112,7 +112,8 @@ export function cardsEqual(a: Item, b: Item) {
 		a.x === b.x &&
 		a.y === b.y &&
 		a.mobileX === b.mobileX &&
-		a.mobileY === b.mobileY
+		a.mobileY === b.mobileY &&
+		a.color === b.color
 	);
 }
 
