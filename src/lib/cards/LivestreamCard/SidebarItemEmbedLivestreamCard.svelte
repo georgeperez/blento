@@ -8,5 +8,5 @@
 <Button {onclick} variant="ghost" class="w-full" size="lg">
 	<Icon class="size-4" />
 
-	Latest stream.place
+	Embed stream.place
 </Button>

@@ -2,7 +2,7 @@ import { BlueskyPostCardDefinition } from './BlueskyPostCard';
 import { EmbedCardDefinition } from './EmbedCard';
 import { ImageCardDefinition } from './ImageCard';
 import { LinkCardDefinition } from './LinkCard';
-import { LivestreamCardDefitition } from './LivestreamCard';
+import { LivestreamCardDefitition, LivestreamEmbedCardDefitition } from './LivestreamCard';
 import { UpdatedBlentosCardDefitition } from './SpecialCards/UpdatedBlentos';
 import { TextCardDefinition } from './TextCard';
 import type { CardDefinition } from './types';
@@ -16,6 +16,7 @@ export const AllCardDefinitions = [
 	YoutubeCardDefinition,
 	BlueskyPostCardDefinition,
 	LivestreamCardDefitition,
+	LivestreamEmbedCardDefitition,
 	EmbedCardDefinition
 ] as const;
 
