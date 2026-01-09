@@ -68,6 +68,9 @@ importers:
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
+      hls.js:
+        specifier: ^1.6.15
+        version: 1.6.15
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
