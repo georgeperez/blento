@@ -7,12 +7,28 @@ import {
 import { getRecord, listRecords, resolveHandle } from '$lib/oauth/atproto';
 import type { Record as ListRecord } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
 import { data } from './data';
-import { AtpBaseClient } from '@atproto/api';
-import { env } from '$env/dynamic/private';
 import { CardDefinitionsByType } from '$lib/cards';
 import type { Item } from '$lib/types';
 
-export async function loadData(handle: string) {
+export async function loadData(
+	handle: string,
+	platform?: App.Platform,
+	forceUpdate: boolean = false
+): Promise<{
+	did: string;
+	data: DownloadedData;
+	additionalData: Record<string, unknown>;
+	updatedAt: number;
+}> {
+	if (!forceUpdate) {
+		const cachedResult = await platform?.env?.USER_DATA_CACHE?.get(handle);
+
+		if (cachedResult) {
+			console.log('using cached result for handle', handle);
+			return JSON.parse(cachedResult);
+		}
+	}
+
 	const did = await resolveHandle({ handle });
 
 	const downloadedData = {} as DownloadedData;
@@ -97,9 +113,14 @@ export async function loadData(handle: string) {
 		}
 	}
 
-	return {
+	const result = {
 		did,
 		data: JSON.parse(JSON.stringify(downloadedData)) as DownloadedData,
-		additionalData
+		additionalData,
+		updatedAt: Date.now()
 	};
+
+	await platform?.env?.USER_DATA_CACHE?.put(handle, JSON.stringify(result));
+
+	return result;
 }

@@ -150,3 +150,19 @@ export const [getCanEdit, setCanEdit] = createContext<() => boolean>();
 
 export const [getAdditionalUserData, setAdditionalUserData] =
 	createContext<Record<string, unknown>>();
+
+export async function refreshData(data: { updatedAt?: number; handle: string }) {
+	const FIVE_MINUTES = 5 * 60 * 1000;
+	const now = Date.now();
+
+	if (now - (data.updatedAt || 0) > FIVE_MINUTES) {
+		try {
+			await fetch('/' + data.handle + '/api/refreshData');
+			console.log('successfully refreshed data', data.handle);
+		} catch (error) {
+			console.error('error refreshing data', error);
+		}
+	} else {
+		console.log('data still fresh, skipping refreshing', data.handle);
+	}
+}

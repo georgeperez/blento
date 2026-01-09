@@ -15,11 +15,14 @@ importers:
         specifier: ^1.0.13
         version: 1.0.18
       '@atproto/api':
-        specifier: ^0.15.6
-        version: 0.15.6
+        specifier: ^0.18.13
+        version: 0.18.13
       '@atproto/common-web':
         specifier: ^0.4.2
         version: 0.4.2
+      '@cloudflare/workers-types':
+        specifier: ^4.20260109.0
+        version: 4.20260109.0
       '@foxui/colors':
         specifier: ^0.4.7
         version: 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
@@ -97,7 +100,7 @@ importers:
         version: 7.2.0
       wrangler:
         specifier: ^4.54.0
-        version: 4.54.0(@cloudflare/workers-types@4.20251225.0)
+        version: 4.54.0(@cloudflare/workers-types@4.20260109.0)
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.5
@@ -110,7 +113,7 @@ importers:
         version: 4.0.0(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))
       '@sveltejs/adapter-cloudflare':
         specifier: ^7.2.4
-        version: 7.2.4(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(wrangler@4.54.0(@cloudflare/workers-types@4.20251225.0))
+        version: 7.2.4(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(wrangler@4.54.0(@cloudflare/workers-types@4.20260109.0))
       '@sveltejs/adapter-static':
         specifier: ^3.0.8
         version: 3.0.8(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))
@@ -183,20 +186,38 @@ packages:
   '@atcute/uint8array@1.0.1':
     resolution: {integrity: sha512-AAnlFKyfDRgb9GNZJbhQ6OuMhbmNPirQyapb8KnmcEhxQZ3+tt+4NcwqekEegY4MpNqSTYeeTdyxq0wGZv1JHg==, tarball: https://registry.npmjs.org/@atcute/uint8array/-/uint8array-1.0.1.tgz}
 
-  '@atproto/api@0.15.6':
-    resolution: {integrity: sha512-hKwrBf60LcI4BqArWyrhWJWIpjwAWUJpW3PVvNzUB1q2W/ByC0JAuwq/F8tZpCEiiVBzHjHVRx4QNA2TA1cG3g==, tarball: https://registry.npmjs.org/@atproto/api/-/api-0.15.6.tgz}
+  '@atproto/api@0.15.27':
+    resolution: {integrity: sha512-ok/WGafh1nz4t8pEQGtAF/32x2E2VDWU4af6BajkO5Gky2jp2q6cv6aB2A5yuvNNcc3XkYMYipsqVHVwLPMF9g==, tarball: https://registry.npmjs.org/@atproto/api/-/api-0.15.27.tgz}
+
+  '@atproto/api@0.18.13':
+    resolution: {integrity: sha512-CULZ01pSJDltLS/Gc9MMrhFzB6OM3ezyZw7KoeLT/sBfwgA1ddA4mWdTh7DIRosPRigXtA05bnoiCutZbQDo+Q==, tarball: https://registry.npmjs.org/@atproto/api/-/api-0.18.13.tgz}
+
+  '@atproto/common-web@0.4.11':
+    resolution: {integrity: sha512-VHejNmSABU8/03VrQ3e36AmT5U3UIeio+qSUqCrO1oNgrJcWfGy1rpj0FVtUugWF8Un29+yzkukzWGZfXL70rQ==, tarball: https://registry.npmjs.org/@atproto/common-web/-/common-web-0.4.11.tgz}
 
   '@atproto/common-web@0.4.2':
     resolution: {integrity: sha512-vrXwGNoFGogodjQvJDxAeP3QbGtawgZute2ed1XdRO0wMixLk3qewtikZm06H259QDJVu6voKC5mubml+WgQUw==, tarball: https://registry.npmjs.org/@atproto/common-web/-/common-web-0.4.2.tgz}
 
-  '@atproto/lexicon@0.4.11':
-    resolution: {integrity: sha512-btefdnvNz2Ao2I+qbmj0F06HC8IlrM/IBz6qOBS50r0S6uDf5tOO+Mv2tSVdimFkdzyDdLtBI1sV36ONxz2cOw==, tarball: https://registry.npmjs.org/@atproto/lexicon/-/lexicon-0.4.11.tgz}
+  '@atproto/lex-data@0.0.7':
+    resolution: {integrity: sha512-W/Q5o9o7n2Sv3UywckChu01X5lwQUtaiiOkGJLnRsdkQTyC6813nPgY+p2sG7NwwM+82lu+FUV9fE/Ul3VqaJw==, tarball: https://registry.npmjs.org/@atproto/lex-data/-/lex-data-0.0.7.tgz}
+
+  '@atproto/lex-json@0.0.7':
+    resolution: {integrity: sha512-bjNPD5M/MhLfjNM7tcxuls80UgXpHqxdOxDXEUouAtZQV/nIDhGjmNUvKxOmOgnDsiZRnT2g5y3onrnjH3a44g==, tarball: https://registry.npmjs.org/@atproto/lex-json/-/lex-json-0.0.7.tgz}
+
+  '@atproto/lexicon@0.4.14':
+    resolution: {integrity: sha512-jiKpmH1QER3Gvc7JVY5brwrfo+etFoe57tKPQX/SmPwjvUsFnJAow5xLIryuBaJgFAhnTZViXKs41t//pahGHQ==, tarball: https://registry.npmjs.org/@atproto/lexicon/-/lexicon-0.4.14.tgz}
+
+  '@atproto/lexicon@0.6.0':
+    resolution: {integrity: sha512-5veb8aD+J5M0qszLJ+73KSFsFrJBgAY/nM1TSAJvGY7fNc9ZAT+PSUlmIyrdye9YznAZ07yktalls/TwNV7cHQ==, tarball: https://registry.npmjs.org/@atproto/lexicon/-/lexicon-0.6.0.tgz}
 
   '@atproto/syntax@0.4.0':
     resolution: {integrity: sha512-b9y5ceHS8YKOfP3mdKmwAx5yVj9294UN7FG2XzP6V5aKUdFazEYRnR9m5n5ZQFKa3GNvz7de9guZCJ/sUTcOAA==, tarball: https://registry.npmjs.org/@atproto/syntax/-/syntax-0.4.0.tgz}
 
-  '@atproto/xrpc@0.7.0':
-    resolution: {integrity: sha512-SfhP9dGx2qclaScFDb58Jnrmim5nk4geZXCqg6sB0I/KZhZEkr9iIx1hLCp+sxkIfEsmEJjeWO4B0rjUIJW5cw==, tarball: https://registry.npmjs.org/@atproto/xrpc/-/xrpc-0.7.0.tgz}
+  '@atproto/syntax@0.4.2':
+    resolution: {integrity: sha512-X9XSRPinBy/0VQ677j8VXlBsYSsUXaiqxWVpGGxJYsAhugdQRb0jqaVKJFtm6RskeNkV6y9xclSUi9UYG/COrA==, tarball: https://registry.npmjs.org/@atproto/syntax/-/syntax-0.4.2.tgz}
+
+  '@atproto/xrpc@0.7.7':
+    resolution: {integrity: sha512-K1ZyO/BU8JNtXX5dmPp7b5UrkLMMqpsIa/Lrj5D3Su+j1Xwq1m6QJ2XJ1AgjEjkI1v4Muzm7klianLE6XGxtmA==, tarball: https://registry.npmjs.org/@atproto/xrpc/-/xrpc-0.7.7.tgz}
 
   '@cloudflare/kv-asset-handler@0.4.1':
     resolution: {integrity: sha512-Nu8ahitGFFJztxUml9oD/DLb7Z28C8cd8F46IVQ7y5Btz575pvMY8AqZsXkX7Gds29eCKdMgIHjIvzskHgPSFg==, tarball: https://registry.npmjs.org/@cloudflare/kv-asset-handler/-/kv-asset-handler-0.4.1.tgz}
@@ -241,8 +262,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20251225.0':
-    resolution: {integrity: sha512-ZZl0cNLFcsBRFKtMftKWOsfAybUYSeiTMzpQV1NlTVlByHAs1rGQt45Jw/qz8LrfHoq9PGTieSj9W350Gi4Pvg==, tarball: https://registry.npmjs.org/@cloudflare/workers-types/-/workers-types-4.20251225.0.tgz}
+  '@cloudflare/workers-types@4.20260109.0':
+    resolution: {integrity: sha512-90vx2lVm+fhQyE8FKqNhT8JBI8GuY0biAwxTzvzeRIdWVo2ArCpUfYMYq4kzaGTfA6NwCmXmBFSgnqfG6OFxLw==, tarball: https://registry.npmjs.org/@cloudflare/workers-types/-/workers-types-4.20260109.0.tgz}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==, tarball: https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz}
@@ -2663,6 +2684,9 @@ packages:
   unenv@2.0.0-rc.24:
     resolution: {integrity: sha512-i7qRCmY42zmCwnYlh9H2SvLEypEFGye5iRmEMKjcGi7zk9UquigRjFtTLz0TYqr0ZGLZhaMHl/foy1bZR+Cwlw==, tarball: https://registry.npmjs.org/unenv/-/unenv-2.0.0-rc.24.tgz}
 
+  unicode-segmenter@0.14.5:
+    resolution: {integrity: sha512-jHGmj2LUuqDcX3hqY12Ql+uhUTn8huuxNZGq7GvtF6bSybzH3aFgedYu/KTzQStEgt1Ra2F3HxadNXsNjb3m3g==, tarball: https://registry.npmjs.org/unicode-segmenter/-/unicode-segmenter-0.14.5.tgz}
+
   unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==, tarball: https://registry.npmjs.org/unpipe/-/unpipe-1.0.0.tgz}
     engines: {node: '>= 0.8'}
@@ -2818,15 +2842,32 @@ snapshots:
 
   '@atcute/uint8array@1.0.1': {}
 
-  '@atproto/api@0.15.6':
+  '@atproto/api@0.15.27':
     dependencies:
       '@atproto/common-web': 0.4.2
-      '@atproto/lexicon': 0.4.11
+      '@atproto/lexicon': 0.4.14
       '@atproto/syntax': 0.4.0
-      '@atproto/xrpc': 0.7.0
+      '@atproto/xrpc': 0.7.7
       await-lock: 2.2.2
       multiformats: 9.9.0
       tlds: 1.258.0
+      zod: 3.24.4
+
+  '@atproto/api@0.18.13':
+    dependencies:
+      '@atproto/common-web': 0.4.11
+      '@atproto/lexicon': 0.6.0
+      '@atproto/syntax': 0.4.2
+      '@atproto/xrpc': 0.7.7
+      await-lock: 2.2.2
+      multiformats: 9.9.0
+      tlds: 1.258.0
+      zod: 3.24.4
+
+  '@atproto/common-web@0.4.11':
+    dependencies:
+      '@atproto/lex-data': 0.0.7
+      '@atproto/lex-json': 0.0.7
       zod: 3.24.4
 
   '@atproto/common-web@0.4.2':
@@ -2836,7 +2877,20 @@ snapshots:
       uint8arrays: 3.0.0
       zod: 3.24.4
 
-  '@atproto/lexicon@0.4.11':
+  '@atproto/lex-data@0.0.7':
+    dependencies:
+      '@atproto/syntax': 0.4.2
+      multiformats: 9.9.0
+      tslib: 2.8.1
+      uint8arrays: 3.0.0
+      unicode-segmenter: 0.14.5
+
+  '@atproto/lex-json@0.0.7':
+    dependencies:
+      '@atproto/lex-data': 0.0.7
+      tslib: 2.8.1
+
+  '@atproto/lexicon@0.4.14':
     dependencies:
       '@atproto/common-web': 0.4.2
       '@atproto/syntax': 0.4.0
@@ -2844,11 +2898,21 @@ snapshots:
       multiformats: 9.9.0
       zod: 3.24.4
 
+  '@atproto/lexicon@0.6.0':
+    dependencies:
+      '@atproto/common-web': 0.4.11
+      '@atproto/syntax': 0.4.2
+      iso-datestring-validator: 2.2.2
+      multiformats: 9.9.0
+      zod: 3.24.4
+
   '@atproto/syntax@0.4.0': {}
 
-  '@atproto/xrpc@0.7.0':
+  '@atproto/syntax@0.4.2': {}
+
+  '@atproto/xrpc@0.7.7':
     dependencies:
-      '@atproto/lexicon': 0.4.11
+      '@atproto/lexicon': 0.6.0
       zod: 3.24.4
 
   '@cloudflare/kv-asset-handler@0.4.1':
@@ -2876,7 +2940,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20251210.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20251225.0': {}
+  '@cloudflare/workers-types@4.20260109.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -3122,7 +3186,7 @@ snapshots:
 
   '@foxui/social@0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)':
     dependencies:
-      '@atproto/api': 0.15.6
+      '@atproto/api': 0.15.27
       '@foxui/core': 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
       '@foxui/time': 0.4.7(svelte@5.45.8)(tailwindcss@4.1.5)
       '@use-gesture/vanilla': 10.3.1
@@ -3387,12 +3451,12 @@ snapshots:
       '@sveltejs/kit': 2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2))
       import-meta-resolve: 4.1.0
 
-  '@sveltejs/adapter-cloudflare@7.2.4(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(wrangler@4.54.0(@cloudflare/workers-types@4.20251225.0))':
+  '@sveltejs/adapter-cloudflare@7.2.4(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(wrangler@4.54.0(@cloudflare/workers-types@4.20260109.0))':
     dependencies:
-      '@cloudflare/workers-types': 4.20251225.0
+      '@cloudflare/workers-types': 4.20260109.0
       '@sveltejs/kit': 2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2))
       worktop: 0.8.0-next.18
-      wrangler: 4.54.0(@cloudflare/workers-types@4.20251225.0)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20260109.0)
 
   '@sveltejs/adapter-static@3.0.8(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))(svelte@5.45.8)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.29.2)))':
     dependencies:
@@ -5213,6 +5277,8 @@ snapshots:
     dependencies:
       pathe: 2.0.3
 
+  unicode-segmenter@0.14.5: {}
+
   unpipe@1.0.0: {}
 
   uri-js@4.4.1:
@@ -5263,7 +5329,7 @@ snapshots:
       mrmime: 2.0.1
       regexparam: 3.0.0
 
-  wrangler@4.54.0(@cloudflare/workers-types@4.20251225.0):
+  wrangler@4.54.0(@cloudflare/workers-types@4.20260109.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.1
       '@cloudflare/unenv-preset': 2.7.13(unenv@2.0.0-rc.24)(workerd@1.20251210.0)
@@ -5274,7 +5340,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20251210.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20251225.0
+      '@cloudflare/workers-types': 4.20260109.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

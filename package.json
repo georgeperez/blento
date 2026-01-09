@@ -43,8 +43,9 @@
 	"dependencies": {
 		"@atcute/client": "^3.1.0",
 		"@atcute/oauth-browser-client": "^1.0.13",
-		"@atproto/api": "^0.15.6",
+		"@atproto/api": "^0.18.13",
 		"@atproto/common-web": "^0.4.2",
+		"@cloudflare/workers-types": "^4.20260109.0",
 		"@foxui/colors": "^0.4.7",
 		"@foxui/core": "^0.4.7",
 		"@foxui/social": "^0.4.7",

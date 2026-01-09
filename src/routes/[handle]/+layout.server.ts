@@ -2,7 +2,8 @@ import { loadData } from '$lib/website/load';
 import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 
-export async function load({ params }) {
+export async function load({ params, platform }) {
 	if (env.PUBLIC_IS_SELFHOSTED) error(404);
-	return await loadData(params.handle);
+	const data = await loadData(params.handle, platform);
+	return { ...data, handle: params.handle };
 }

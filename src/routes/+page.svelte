@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { setAdditionalUserData } from '$lib/helper.js';
+	import { refreshData, setAdditionalUserData } from '$lib/helper.js';
 	import { type Item } from '$lib/types.js';
 	import Website from '$lib/Website.svelte';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 
 	// svelte-ignore state_referenced_locally
 	setAdditionalUserData(data.additionalData);
+
+	onMount(() => {
+		refreshData(data);
+	});
 </script>
 
 <Website
