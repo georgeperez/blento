@@ -159,7 +159,15 @@
 					item = await cardDef?.upload(item);
 				}
 
-				promises.push(putRecord({ collection: 'app.blento.card', rkey: item.id, record: item }));
+				item.version = 1;
+
+				promises.push(
+					putRecord({
+						collection: 'app.blento.card',
+						rkey: item.id,
+						record: item
+					})
+				);
 			}
 		}
 
