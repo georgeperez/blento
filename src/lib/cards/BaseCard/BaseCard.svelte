@@ -17,6 +17,7 @@
 		item: Item;
 		controls?: Snippet<[]>;
 		isEditing?: boolean;
+		showOutline?: boolean
 	} & WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
 	let {
@@ -25,6 +26,7 @@
 		ref = $bindable(null),
 		isEditing = false,
 		controls,
+		showOutline,
 		...rest
 	}: BaseCardProps = $props();
 
@@ -39,7 +41,8 @@
 	class={[
 		'card group focus-within:outline-accent-500 @container/card absolute z-0 rounded-2xl outline-offset-2 transition-all duration-200 focus-within:outline-2',
 		color ? (colors[color] ?? colors.accent) : colors.base,
-		color !== 'accent' && item.color !== 'base' && item.color !== 'transparent' ? color : ''
+		color !== 'accent' && item.color !== 'base' && item.color !== 'transparent' ? color : '',
+		showOutline ? 'outline-2' : ''
 	]}
 	style={`
     --mx: ${item.mobileX};

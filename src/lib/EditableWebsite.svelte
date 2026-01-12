@@ -346,8 +346,8 @@
 					}}
 					onsetsize={(newW: number, newH: number) => {
 						if (isMobile) {
-							item.mobileW = newW * 2;
-							item.mobileH = newH * 2;
+							item.mobileW = newW;
+							item.mobileH = newH;
 						} else {
 							item.w = newW;
 							item.h = newH;

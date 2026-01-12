@@ -58,11 +58,11 @@
 
 	const cardDef = $derived(CardDefinitionsByType[item.cardType]);
 
-	const minW = $derived(cardDef.minW ?? 1);
-	const minH = $derived(cardDef.minH ?? 1);
+	const minW = $derived(cardDef.minW ?? (isMobile() ? 4 : 2));
+	const minH = $derived(cardDef.minH ?? (isMobile() ? 2 : 2));
 
 	const maxW = $derived(cardDef.maxW ?? COLUMNS);
-	const maxH = $derived(cardDef.maxH ?? COLUMNS);
+	const maxH = $derived(cardDef.maxH ?? 6);
 
 	// Resize handle state
 	let isResizing = $state(false);
@@ -78,8 +78,8 @@
 		resizeStartX = e.clientX;
 		resizeStartY = e.clientY;
 		// For mobile view, sizes are doubled so we need to account for that
-		resizeStartW = isMobile() ? (item.mobileW ?? item.w) / 2 : item.w;
-		resizeStartH = isMobile() ? (item.mobileH ?? item.h) / 2 : item.h;
+		resizeStartW = isMobile() ? (item.mobileW ?? item.w) : item.w;
+		resizeStartH = isMobile() ? (item.mobileH ?? item.h) : item.h;
 
 		document.addEventListener('pointermove', handleResizeMove);
 		document.addEventListener('pointerup', handleResizeEnd);
@@ -99,25 +99,31 @@
 		const deltaX = e.clientX - resizeStartX;
 		const deltaY = e.clientY - resizeStartY;
 
+		const refRect = ref.getBoundingClientRect();
+
+		console.log(Math.round(deltaX / cellSize));
 		// Convert pixel delta to grid units (2 grid units = 1 visual cell)
 		const gridDeltaW = Math.round(deltaX / cellSize);
 		const gridDeltaH = Math.round(deltaY / cellSize);
 
-		// Calculate new size (snap to even numbers since visual units are 2 grid units)
 		let newW = resizeStartW + gridDeltaW;
 		let newH = resizeStartH + gridDeltaH;
 
-		// Snap to increments of 2
-		newW = Math.round(newW / 2) * 2;
-		newH = newH;
+		console.log(item.mobileW, newW);
+		if (isMobile()) {
+			newW = Math.round(newW / 4) * 4;
+		} else {
+			newW = Math.round(newW / 2) * 2;
+		}
+		console.log(item.mobileW, newW);
 
 		// Clamp to min/max
 		newW = Math.max(minW, Math.min(maxW, newW));
 		newH = Math.max(minH, Math.min(maxH, newH));
 
 		// Only call onsetsize if size changed
-		const currentW = isMobile() ? (item.mobileW ?? item.w) / 2 : item.w;
-		const currentH = isMobile() ? (item.mobileH ?? item.h) / 2 : item.h;
+		const currentW = isMobile() ? (item.mobileW ?? item.w) : item.w;
+		const currentH = isMobile() ? (item.mobileH ?? item.h) : item.h;
 
 		if (newW !== currentW || newH !== currentH) {
 			onsetsize?.(newW, newH);
@@ -131,7 +137,7 @@
 	}
 </script>
 
-<BaseCard {item} {...rest} isEditing={true} bind:ref>
+<BaseCard {item} {...rest} isEditing={true} bind:ref showOutline={isResizing}>
 	{@render children?.()}
 
 	{#snippet controls()}
@@ -243,27 +249,45 @@
 				</div>
 			</div>
 
-			<!-- Resize handle at bottom right corner -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				class={[
-					'absolute -bottom-2 -right-2 z-50 cursor-se-resize rounded-full p-1 group-focus-within:flex group-hover:flex',
-					isResizing ? 'flex' : 'hidden'
-				]}
-				onpointerdown={handleResizeStart}
-			>
-				<div class="bg-base-100 dark:bg-base-800 border-base-300 dark:border-base-600 flex size-5 items-center justify-center rounded-full border shadow-md">
+			{#if cardDef.canResize !== false}
+				<!-- Resize handle at bottom right corner -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					class={[
+						'absolute inset-0 z-50 cursor-se-resize items-end justify-end overflow-hidden rounded-2xl group-focus-within:flex group-hover:flex',
+						isResizing ? 'flex' : 'hidden'
+					]}
+					onpointerdown={handleResizeStart}
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 16 16"
-						fill="currentColor"
-						class="text-base-500 size-3"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="text-base-500 size-4"
 					>
-						<path d="M5.5 10.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm4 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+						<circle cx="12" cy="5" r="1" /><circle cx="19" cy="5" r="1" /><circle
+							cx="5"
+							cy="5"
+							r="1"
+						/>
+						<circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle
+							cx="5"
+							cy="12"
+							r="1"
+						/>
+						<circle cx="12" cy="19" r="1" /><circle cx="19" cy="19" r="1" /><circle
+							cx="5"
+							cy="19"
+							r="1"
+						/>
 					</svg>
+					<span class="sr-only">Resize card</span>
 				</div>
-				<span class="sr-only">Resize card</span>
-			</div>
+			{/if}
 		{/if}
 	{/snippet}
 </BaseCard>

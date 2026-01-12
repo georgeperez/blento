@@ -52,4 +52,6 @@ export type CardDefinition = {
 
 	minH?: number;
 	maxH?: number;
+
+	canResize?: boolean;
 };

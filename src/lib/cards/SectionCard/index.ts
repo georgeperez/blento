@@ -22,5 +22,6 @@ export const SectionCardDefinition = {
 
 	sidebarButtonText: 'Section Headline',
 	defaultColor: 'transparent',
-	maxH: 1
+	maxH: 1,
+	canResize: false
 } as CardDefinition & { type: 'section' };
