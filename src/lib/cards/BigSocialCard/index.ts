@@ -70,6 +70,7 @@ import {
 	siSignal,
 	siWechat,
 	siLine,
+	siArchiveofourown,
 	type SimpleIcon
 } from 'simple-icons';
 
@@ -122,7 +123,9 @@ export const platformPatterns: Record<string, RegExp> = {
 	signal: /(?:signal\.org|signal\.me)/i,
 	wechat: /(?:wechat\.com|weixin\.qq\.com)/i,
 	line: /(?:line\.me)/i,
-	skype: /(?:skype\.com)/i
+	skype: /(?:skype\.com)/i,
+
+	ao3: /(?:archiveofourown\.org)/i
 };
 
 export const platformsData: Record<string, SimpleIcon> = {
@@ -170,7 +173,9 @@ export const platformsData: Record<string, SimpleIcon> = {
 	// chat / messaging
 	signal: siSignal,
 	wechat: siWechat,
-	line: siLine
+	line: siLine,
+
+	ao3: siArchiveofourown
 };
 
 export function detectPlatform(url: string): string | null {
