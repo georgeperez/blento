@@ -5,8 +5,6 @@
 	let { item }: ContentComponentProps = $props();
 
 	const platform = $derived(item.cardData.platform as string);
-
-	$inspect(platformsData[platform].svg)
 </script>
 
 <a

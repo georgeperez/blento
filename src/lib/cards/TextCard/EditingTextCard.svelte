@@ -9,8 +9,6 @@
 	let { item = $bindable<Item>() }: ContentComponentProps = $props();
 
 	let editor: Editor | null = $state(null);
-
-$inspect(textSizeClasses[item.cardData.textSize as number]);
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
