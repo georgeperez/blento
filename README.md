@@ -10,6 +10,7 @@ made with svelte, tailwind and hosted on cloudflare workers.
 
 ```
 git clone https://github.com/flo-bit/blento.git
+cd blento
 cp .env.example .env
 pnpm install
 pnpm run dev

@@ -35,6 +35,44 @@ export const BigSocialCardDefinition = {
 	}
 } as CardDefinition & { type: 'bigsocial' };
 
+import {
+	siInstagram,
+	siFacebook,
+	siX,
+	siYoutube,
+	siTiktok,
+	siBluesky,
+	siThreads,
+	siSnapchat,
+	siPinterest,
+	siTwitch,
+	siDiscord,
+	siGithub,
+	siSpotify,
+	siReddit,
+	siWhatsapp,
+	siTelegram,
+	siMastodon,
+	siBehance,
+	siDribbble,
+	siMedium,
+	siDevdotto,
+	siHashnode,
+	siPatreon,
+	siKofi,
+	siBuymeacoffee,
+	siSubstack,
+	siSoundcloud,
+	siBandcamp,
+	siApplepodcasts,
+	siFigma,
+	siNotion,
+	siSignal,
+	siWechat,
+	siLine,
+	type SimpleIcon
+} from 'simple-icons';
+
 export const platformPatterns: Record<string, RegExp> = {
 	instagram: /(?:instagram\.com|instagr\.am)/i,
 	facebook: /(?:facebook\.com|fb\.com|fb\.me)/i,
@@ -54,29 +92,38 @@ export const platformPatterns: Record<string, RegExp> = {
 	reddit: /(?:reddit\.com)/i,
 	whatsapp: /(?:whatsapp\.com|wa\.me)/i,
 	telegram: /(?:t\.me|telegram\.org)/i,
-	mastodon: /(?:mastodon\.social|mastodon\.online|mstdn\.social)/i
-};
+	mastodon: /(?:mastodon\.social|mastodon\.online|mstdn\.social)/i,
 
-import {
-	siInstagram,
-	siFacebook,
-	siX,
-	siYoutube,
-	siTiktok,
-	siBluesky,
-	siThreads,
-	siSnapchat,
-	siPinterest,
-	siTwitch,
-	siDiscord,
-	siGithub,
-	siSpotify,
-	siReddit,
-	siWhatsapp,
-	siTelegram,
-	siMastodon,
-	type SimpleIcon
-} from 'simple-icons';
+	// professional / creator
+	behance: /(?:behance\.net)/i,
+	dribbble: /(?:dribbble\.com)/i,
+	medium: /(?:medium\.com)/i,
+	devto: /(?:dev\.to)/i,
+	hashnode: /(?:hashnode\.com)/i,
+
+	// support / monetization
+	patreon: /(?:patreon\.com)/i,
+	kofi: /(?:ko-fi\.com|kofi\.com)/i,
+	buymeacoffee: /(?:buymeacoffee\.com)/i,
+	substack: /(?:substack\.com)/i,
+
+	// audio / podcasts
+	soundcloud: /(?:soundcloud\.com)/i,
+	bandcamp: /(?:bandcamp\.com)/i,
+	applepodcasts: /(?:podcasts\.apple\.com)/i,
+	googlepodcasts: /(?:podcasts\.google\.com)/i,
+
+	// tools / misc
+	figma: /(?:figma\.com)/i,
+	notion: /(?:notion\.so)/i,
+
+	// chat / messaging
+	slack: /(?:slack\.com)/i,
+	signal: /(?:signal\.org|signal\.me)/i,
+	wechat: /(?:wechat\.com|weixin\.qq\.com)/i,
+	line: /(?:line\.me)/i,
+	skype: /(?:skype\.com)/i
+};
 
 export const platformsData: Record<string, SimpleIcon> = {
 	instagram: siInstagram,
@@ -96,7 +143,34 @@ export const platformsData: Record<string, SimpleIcon> = {
 	reddit: siReddit,
 	whatsapp: siWhatsapp,
 	telegram: siTelegram,
-	mastodon: siMastodon
+	mastodon: siMastodon,
+
+	// professional / creator
+	behance: siBehance,
+	dribbble: siDribbble,
+	medium: siMedium,
+	devto: siDevdotto,
+	hashnode: siHashnode,
+
+	// support / monetization
+	patreon: siPatreon,
+	kofi: siKofi,
+	buymeacoffee: siBuymeacoffee,
+	substack: siSubstack,
+
+	// audio / podcasts
+	soundcloud: siSoundcloud,
+	bandcamp: siBandcamp,
+	applepodcasts: siApplepodcasts,
+
+	// tools / misc
+	figma: siFigma,
+	notion: siNotion,
+
+	// chat / messaging
+	signal: siSignal,
+	wechat: siWechat,
+	line: siLine
 };
 
 export function detectPlatform(url: string): string | null {
