@@ -442,13 +442,13 @@
 		drawSprite(playerSprite, player.x, playerY, player.width, drawHeight);
 
 		// Draw score
-		ctx.fillStyle = '#000000';
+		ctx.fillStyle = '#ffffff';
 		ctx.font = `bold ${Math.max(12, Math.floor(14 * (scale / 2.5)))}px monospace`;
 		ctx.textAlign = 'right';
 		ctx.fillText(String(score).padStart(5, '0'), canvasWidth - 10, 25);
 
 		if (highScore > 0) {
-			ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+			ctx.fillStyle = 'rgba(256, 256, 256, 0.5)';
 			ctx.fillText(
 				'HI ' + String(highScore).padStart(5, '0'),
 				canvasWidth - 70 * (scale / 2.5),
@@ -458,7 +458,7 @@
 
 		// Draw game over text (no overlay background)
 		if (gameState === 'gameover') {
-			ctx.fillStyle = '#000000';
+			ctx.fillStyle = '#ffffff';
 			ctx.font = `bold ${Math.max(14, Math.floor(20 * (scale / 2.5)))}px monospace`;
 			ctx.textAlign = 'center';
 			ctx.fillText('GAME OVER', canvasWidth / 2, canvasHeight / 2 - 40);
