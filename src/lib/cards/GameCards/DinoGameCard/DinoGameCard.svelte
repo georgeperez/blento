@@ -58,6 +58,13 @@
 
 	let gameSpeed = 5;
 	let frameCount = 0;
+	let lastFrameTimestamp = 0;
+	let lastSpawnFrame = 0;
+	let lastWalkFrame = 0;
+	let lastBatFrame = 0;
+	let lastSpeedScore = 0;
+	const FRAME_TIME_MS = 1000 / 60;
+	const MAX_SPEED_BASE = 10.5;
 
 	// Sprite positions in tilemap (row, column - 1-indexed based on cells.txt)
 	const SPRITE_POSITIONS: Record<string, { row: number; col: number }> = {
@@ -151,9 +158,13 @@
 			frame: 0
 		};
 		obstacles = [];
-		gameSpeed = 3.5 * (scale / 2.5);
+		gameSpeed = 4.2 * (scale / 2.5);
 		score = 0;
 		frameCount = 0;
+		lastSpawnFrame = 0;
+		lastWalkFrame = 0;
+		lastBatFrame = 0;
+		lastSpeedScore = 0;
 		initGroundTiles();
 	}
 
@@ -293,11 +304,19 @@
 		ctx.drawImage(sprites[spriteKey], x, y, width, height);
 	}
 
-	function gameLoop() {
+	function gameLoop(timestamp = 0) {
 		if (!ctx || !canvas || !spritesLoaded) {
 			animationId = requestAnimationFrame(gameLoop);
 			return;
 		}
+
+		if (!lastFrameTimestamp) {
+			lastFrameTimestamp = timestamp;
+		}
+
+		const deltaMs = timestamp - lastFrameTimestamp;
+		lastFrameTimestamp = timestamp;
+		const deltaFrames = Math.min(deltaMs / FRAME_TIME_MS, 3);
 
 		const canvasWidth = canvas.width;
 		const canvasHeight = canvas.height;
@@ -312,11 +331,11 @@
 		}
 
 		if (gameState === 'playing') {
-			frameCount++;
+			frameCount += deltaFrames;
 
 			// Update ground tiles - seamless scrolling
 			for (const tile of groundTiles) {
-				tile.x -= gameSpeed;
+				tile.x -= gameSpeed * deltaFrames;
 			}
 
 			// Find the rightmost tile and reposition tiles that went off-screen
@@ -329,8 +348,8 @@
 
 			// Update player physics
 			if (player.isJumping) {
-				player.velocityY += gravity;
-				player.y += player.velocityY;
+				player.velocityY += gravity * deltaFrames;
+				player.y += player.velocityY * deltaFrames;
 
 				if (player.y >= groundY - player.height) {
 					player.y = groundY - player.height;
@@ -342,28 +361,34 @@
 			}
 
 			// Animate player (3 walk frames)
-			if (frameCount % 8 === 0) {
+			if (frameCount - lastWalkFrame >= 8) {
 				player.frame = (player.frame + 1) % 3;
+				lastWalkFrame = frameCount;
 			}
 
 			// Animate flying obstacles
 			for (const obs of obstacles) {
-				if (obs.type === 'air' && frameCount % 12 === 0) {
+				if (obs.type === 'air' && frameCount - lastBatFrame >= 12) {
 					obs.frame = obs.frame === 1 ? 2 : 1;
 					obs.sprite = `bat${obs.frame}`;
+					lastBatFrame = frameCount;
 				}
 			}
 
 			// Spawn obstacles
 			const baseSpawnRate = 120;
 			const spawnRate = Math.max(60, baseSpawnRate - Math.floor(score / 100) * 5);
-			if (frameCount % spawnRate === 0 || (obstacles.length === 0 && frameCount > 60)) {
+			if (
+				frameCount - lastSpawnFrame >= spawnRate ||
+				(obstacles.length === 0 && frameCount > 60)
+			) {
 				spawnObstacle(canvasWidth, groundY);
+				lastSpawnFrame = frameCount;
 			}
 
 			// Update obstacles
 			obstacles = obstacles.filter((obs) => {
-				obs.x -= gameSpeed;
+				obs.x -= gameSpeed * deltaFrames;
 				return obs.x > -obs.width;
 			});
 
@@ -407,9 +432,10 @@
 			// Update score
 			score = Math.floor(frameCount / 5);
 
-			// Increase speed over time (slower progression)
-			if (frameCount % 700 === 0) {
-				gameSpeed = Math.min(gameSpeed + 0.2 * (scale / 2.5), 8 * (scale / 2.5));
+			// Increase speed every 100 points up to a cap
+			if (score >= lastSpeedScore + 100) {
+				gameSpeed = Math.min(gameSpeed + 0.25 * (scale / 2.5), MAX_SPEED_BASE * (scale / 2.5));
+				lastSpeedScore = score - (score % 100);
 			}
 		}
 
