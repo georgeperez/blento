@@ -63,3 +63,5 @@
 
 - analytics (get page views)
 - custom subdomain
+
+- dino game: fix fps dependency

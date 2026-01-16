@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isTyping } from '$lib/helper';
 	import type { ContentComponentProps } from '../../types';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -196,6 +197,8 @@
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
+		if(isTyping()) return;
+
 		if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
 			e.preventDefault();
 			jump();

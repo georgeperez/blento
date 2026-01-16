@@ -4,10 +4,10 @@
 	import BaseCard from './BaseCard.svelte';
 	import type { Item } from '$lib/types';
 	import { Button, Popover } from '@foxui/core';
-	import { getCanEdit, getIsMobile } from '$lib/helper';
 	import { ColorSelect } from '@foxui/colors';
 	import { CardDefinitionsByType, getColor } from '..';
 	import { COLUMNS } from '$lib';
+	import { getCanEdit, getIsMobile } from '$lib/website/context';
 
 	let colorsChoices = [
 		{ class: 'text-base-500', label: 'base' },

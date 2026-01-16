@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../types';
+import type { CardDefinition } from '$lib/cards/types';
 import DinoGameCard from './DinoGameCard.svelte';
 import SidebarItemDinoGameCard from './SidebarItemDinoGameCard.svelte';
 

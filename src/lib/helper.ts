@@ -1,5 +1,4 @@
-import { createContext } from 'svelte';
-import type { Item } from './types';
+import type { Item, WebsiteData } from './types';
 import { COLUMNS } from '$lib';
 
 export function clamp(value: number, min: number, max: number): number {
@@ -226,7 +225,8 @@ export function cardsEqual(a: Item, b: Item) {
 		a.y === b.y &&
 		a.mobileX === b.mobileX &&
 		a.mobileY === b.mobileY &&
-		a.color === b.color
+		a.color === b.color &&
+		a.page === b.page
 	);
 }
 
@@ -257,13 +257,6 @@ export function setPositionOfNewItem(newItem: Item, items: Item[]) {
 	}
 }
 
-export const [getIsMobile, setIsMobile] = createContext<() => boolean>();
-
-export const [getCanEdit, setCanEdit] = createContext<() => boolean>();
-
-export const [getAdditionalUserData, setAdditionalUserData] =
-	createContext<Record<string, unknown>>();
-
 export async function refreshData(data: { updatedAt?: number; handle: string }) {
 	const FIVE_MINUTES = 5 * 60 * 1000;
 	const now = Date.now();
@@ -278,4 +271,31 @@ export async function refreshData(data: { updatedAt?: number; handle: string }) 
 	} else {
 		console.log('data still fresh, skipping refreshing', data.handle);
 	}
+}
+
+export function getName(data: WebsiteData): string {
+	return (data.publication?.name ?? data.profile.displayName) || data.handle;
+}
+
+export function getDescription(data: WebsiteData): string {
+	return data.publication?.description ?? data.profile.description ?? '';
+}
+
+export function getHideProfile(data: WebsiteData): boolean {
+	if (data?.publication?.preferences?.hideProfile === false) return false;
+	if (data?.publication?.preferences?.hideProfile === true) return true;
+
+	return data.page !== 'blento.self';
+}
+
+export function isTyping() {
+	const active = document.activeElement;
+
+	const isEditable =
+		active instanceof HTMLInputElement ||
+		active instanceof HTMLTextAreaElement ||
+		// @ts-expect-error this fine
+		active?.isContentEditable;
+
+	return isEditable;
 }

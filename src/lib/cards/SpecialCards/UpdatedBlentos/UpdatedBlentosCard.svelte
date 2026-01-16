@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ContentComponentProps } from '$lib/cards/types';
-	import { getAdditionalUserData } from '$lib/helper';
-	import { getProfile } from '$lib/oauth/atproto';
+	import { getAdditionalUserData } from '$lib/website/context';
 	import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
 	import { onMount } from 'svelte';
 

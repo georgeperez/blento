@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { getIsMobile } from '$lib/helper';
+	import { getIsMobile } from '$lib/website/context';
 	import type { ContentComponentProps } from '../types';
 
 	let { item }: ContentComponentProps = $props();

@@ -1,4 +1,4 @@
-import { uploadBlob } from '$lib/website/utils';
+import { uploadBlob } from '$lib/oauth/utils';
 import type { CardDefinition } from '../types';
 import CreateImageCardModal from './CreateImageCardModal.svelte';
 import ImageCard from './ImageCard.svelte';

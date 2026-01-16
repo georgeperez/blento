@@ -1,59 +1,55 @@
 <script lang="ts">
-	import Head from './Head.svelte';
-
 	import { marked } from 'marked';
-	import { client, login } from './oauth';
-	import { Button, Subheading } from '@foxui/core';
+	import { client, login } from '../oauth';
+	import { Button } from '@foxui/core';
 	import { BlueskyLogin } from '@foxui/social';
 	import { env } from '$env/dynamic/public';
+	import type { WebsiteData } from '$lib/types';
+	import { getDescription, getName } from '$lib/helper';
+
 	let {
-		handle,
-		did,
 		data,
 		showEditButton = false
-	}: { handle: string; did: string; data: any; showEditButton?: boolean } = $props();
-
-	// svelte-ignore state_referenced_locally
-	const profileData = data?.data?.['app.bsky.actor.profile']?.self?.value;
+	}: {
+		data: WebsiteData;
+		showEditButton?: boolean;
+	} = $props();
 
 	const renderer = new marked.Renderer();
 	renderer.link = ({ href, title, text }) =>
 		`<a target="_blank" href="${href}" title="${title}">${text}</a>`;
 </script>
 
-<Head
-	favicon={profileData?.avatar?.ref?.$link ? 'https://cdn.bsky.app/img/avatar/plain/' + did + '/' + profileData.avatar.ref.$link : null}
-	title={profileData?.displayName || handle}
-	image={'/' + handle + '/og.png'}
-/>
-
 <!-- lg:fixed lg:h-screen lg:w-1/4 lg:max-w-none lg:px-12 lg:pt-24 xl:w-1/3 -->
 <div
 	class="mx-auto flex max-w-lg flex-col justify-between px-8 @5xl/wrapper:fixed @5xl/wrapper:h-screen @5xl/wrapper:w-1/4 @5xl/wrapper:max-w-none @5xl/wrapper:px-12"
 >
 	<div class="flex flex-col gap-4 pt-16 pb-8 @5xl/wrapper:h-screen @5xl/wrapper:pt-24">
-		{#if profileData?.avatar?.ref?.$link}
+		{#if data.profile.avatar}
 			<img
-				class="size-32 rounded-full @5xl/wrapper:size-44 border border-base-400 dark:border-base-800"
-				src={'https://cdn.bsky.app/img/avatar/plain/' + did + '/' + profileData.avatar.ref.$link}
+				class="border-base-400 dark:border-base-800 size-32 rounded-full border @5xl/wrapper:size-44"
+				src={data.profile.avatar}
 				alt=""
 			/>
 		{:else}
 			<div class="bg-base-300 dark:bg-base-700 size-32 rounded-full @5xl/wrapper:size-44"></div>
 		{/if}
+
 		<div class="text-4xl font-bold wrap-anywhere">
-			{profileData?.displayName || handle}
+			{getName(data)}
 		</div>
 
-		<div class="scrollbar -mx-4 flex-grow overflow-y-scroll px-4 overflow-x-hidden">
+		<div class="scrollbar -mx-4 flex-grow overflow-x-hidden overflow-y-scroll px-4">
 			<div
 				class="text-base-600 dark:text-base-400 prose dark:prose-invert prose-a:text-accent-500 prose-a:no-underline"
 			>
-				{@html marked.parse(profileData?.description ?? '', { renderer })}
+				{@html marked.parse(getDescription(data), {
+					renderer
+				})}
 			</div>
 		</div>
 
-		{#if showEditButton && client.isLoggedIn && client.profile?.did === did}
+		{#if showEditButton && client.isLoggedIn && client.profile?.did === data.did}
 			<div>
 				<Button href="{env.PUBLIC_IS_SELFHOSTED ? '' : client.profile?.handle}/edit" class="mt-2">
 					<svg
@@ -73,9 +69,11 @@
 					Edit Your Website</Button
 				>
 			</div>
+			{:else}
+			<div class="h-[42px] w-1 @5xl/wrapper:hidden"></div>
 		{/if}
 
-		{#if !env.PUBLIC_IS_SELFHOSTED && handle === 'blento.app' && client.profile?.handle !== handle}
+		{#if !env.PUBLIC_IS_SELFHOSTED && data.handle === 'blento.app' && client.profile?.handle !== data.handle}
 			{#if !client.isInitializing && !client.isLoggedIn}
 				<div>
 					<div class="my-4 text-sm">
@@ -120,47 +118,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.scrollbar::-webkit-scrollbar-track {
-		background-color: transparent;
-	}
-
-	@supports (scrollbar-width: auto) {
-		.scrollbar {
-			scrollbar-color: var(--color-base-400) transparent;
-			scrollbar-width: thin;
-		}
-
-		:global(.dark .scrollbar) {
-			scrollbar-color: var(--color-base-800) transparent;
-		}
-	}
-
-	@supports not (scrollbar-width: auto) {
-		:global(.scrollbar::-webkit-scrollbar) {
-			width: 14px;
-			height: 14px;
-		}
-	}
-
-	.scrollbar::-webkit-scrollbar-thumb {
-		background-color: var(--color-base-400);
-		border-radius: 20px;
-		border: 4px solid transparent;
-		background-clip: content-box;
-	}
-
-	.scrollbar::-webkit-scrollbar-thumb:hover {
-		background-color: var(--color-base-500);
-	}
-
-	/* Dark mode rules */
-	:global(.dark .scrollbar::-webkit-scrollbar-thumb) {
-		background-color: var(--color-base-800);
-	}
-
-	:global(.dark .scrollbar::-webkit-scrollbar-thumb:hover) {
-		background-color: var(--color-base-700);
-	}
-</style>
