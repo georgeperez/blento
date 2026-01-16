@@ -93,7 +93,7 @@ export const platformPatterns: Record<string, RegExp> = {
 	reddit: /(?:reddit\.com)/i,
 	whatsapp: /(?:whatsapp\.com|wa\.me)/i,
 	telegram: /(?:t\.me|telegram\.org)/i,
-	mastodon: /(?:mastodon\.social|mastodon\.online|mstdn\.social)/i,
+	mastodon: /(?:mastodon\.social|mastodon\.online|mstdn\.social|hachyderm\.io)/i,
 
 	// professional / creator
 	behance: /(?:behance\.net)/i,
