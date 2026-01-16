@@ -35,16 +35,16 @@
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
 	"vars": {
-		"PUBLIC_HANDLE": "blento.app",
-		"PUBLIC_IS_SELFHOSTED": "",
-		"PUBLIC_DOMAIN": "https://blento.app"
+		"PUBLIC_HANDLE": "georgeperez.me",
+		"PUBLIC_IS_SELFHOSTED": "true",
+		"PUBLIC_DOMAIN": "https://georgeperez.me"
 	},
 	"kv_namespaces": [
 		{
 			"binding": "USER_DATA_CACHE",
-			"id": "d6ff203259de48538d332b0a5df258a7"
+			"id": "2346190a41e34d7f897c5bd3de8475da"
 		}
-	]
+	],
 	/**
 	 * Service Bindings (communicate between multiple Workers)
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
