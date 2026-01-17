@@ -1,37 +1,26 @@
 <script lang="ts">
 	import { client, login } from '$lib/oauth/auth.svelte.js';
 
-	import {
-		Navbar,
-		Button,
-		toast,
-		Toaster,
-		Toggle,
-		Sidebar,
-		Popover,
-		Input,
-		Label
-	} from '@foxui/core';
+	import { Navbar, Button, toast, Toaster, Toggle, Sidebar, Popover, Input } from '@foxui/core';
 	import { BlueskyLogin } from '@foxui/social';
 
 	import { COLUMNS, margin, mobileMargin } from '$lib';
 	import {
-		cardsEqual,
 		clamp,
 		compactItems,
+		createEmptyCard,
 		fixCollisions,
-		getDescription,
 		getHideProfile,
 		getName,
 		isTyping,
+		savePage,
+		scrollToItem,
 		setPositionOfNewItem,
 		validateLink
 	} from '../helper';
 	import Profile from './Profile.svelte';
 	import type { Item, WebsiteData } from '../types';
-	import { deleteRecord, putRecord } from '../oauth/atproto';
 	import { innerWidth } from 'svelte/reactivity/window';
-	import { TID } from '@atproto/common-web';
 	import EditingCard from '../cards/Card/EditingCard.svelte';
 	import { AllCardDefinitions, CardDefinitionsByType } from '../cards';
 	import { tick, type Component } from 'svelte';
@@ -42,12 +31,18 @@
 	import Context from './Context.svelte';
 	import Settings from './Settings.svelte';
 	import Head from './Head.svelte';
+	import { compressImage } from '../helper';
 
 	let {
 		data
 	}: {
 		data: WebsiteData;
 	} = $props();
+
+	let imageInputRef: HTMLInputElement | undefined = $state();
+	let videoInputRef: HTMLInputElement | undefined = $state();
+	let imageDragOver = $state(false);
+	let imageDragPosition: { x: number; y: number } | null = $state(null);
 
 	// svelte-ignore state_referenced_locally
 	let items: Item[] = $state(data.cards);
@@ -66,6 +61,11 @@
 		y: number;
 		mouseDeltaX: number;
 		mouseDeltaY: number;
+		// For hysteresis - track last decision to prevent flickering
+		lastTargetId: string | null;
+		lastPlacement: 'above' | 'below' | null;
+		// Store original positions to reset from during drag
+		originalPositions: Map<string, { x: number; y: number; mobileX: number; mobileY: number }>;
 	} = $state({
 		element: null,
 		item: null,
@@ -74,7 +74,10 @@
 		x: -1,
 		y: -1,
 		mouseDeltaX: 0,
-		mouseDeltaY: 0
+		mouseDeltaY: 0,
+		lastTargetId: null,
+		lastPlacement: null,
+		originalPositions: new Map()
 	});
 
 	let showingMobileView = $state(false);
@@ -94,21 +97,11 @@
 			popover.hidePopover();
 		}
 
-		let item: Item = {
-			id: TID.nextStr(),
-			x: 0,
-			y: 0,
-			w: 2,
-			h: 2,
-			mobileH: 4,
-			mobileW: 4,
-			mobileX: 0,
-			mobileY: 0,
-			cardType: type,
-			cardData: cardData ?? {},
-			version: 2,
-			page: data.page
-		};
+		let item = createEmptyCard(data.page);
+		item.cardType = type;
+
+		item.cardData = cardData ?? {};
+
 		const cardDef = CardDefinitionsByType[type];
 		cardDef?.createNew?.(item);
 
@@ -129,20 +122,11 @@
 
 		items = [...items, item];
 
-		const containerRect = container?.getBoundingClientRect();
-
 		newItem = {};
 
 		await tick();
 
-		// scroll to newly created card
-		if (!containerRect) return;
-		const currentMargin = isMobile ? mobileMargin : margin;
-		const currentY = isMobile ? item.mobileY : item.y;
-		const bodyRect = document.body.getBoundingClientRect();
-		const offset = containerRect.top - bodyRect.top;
-		const cellSize = (containerRect.width - currentMargin * 2) / COLUMNS;
-		window.scrollTo({ top: offset + cellSize * (currentY - 1), behavior: 'smooth' });
+		scrollToItem(item, isMobile, container);
 	}
 
 	let isSaving = $state(false);
@@ -152,87 +136,9 @@
 	async function save() {
 		isSaving = true;
 
-		const promises = [];
-		// find all cards that have been updated (where items differ from originalItems)
-		for (let item of items) {
-			const originalItem = data.cards.find((i) => cardsEqual(i, item));
+		await savePage(data, items, publication);
 
-			if (!originalItem) {
-				console.log('updated or new item', item);
-				item.updatedAt = new Date().toISOString();
-				// run optional upload function for this card type
-				const cardDef = CardDefinitionsByType[item.cardType];
-
-				if (cardDef?.upload) {
-					item = await cardDef?.upload(item);
-				}
-
-				item.page = data.page;
-				item.version = 2;
-
-				promises.push(
-					putRecord({
-						collection: 'app.blento.card',
-						rkey: item.id,
-						record: item
-					})
-				);
-			}
-		}
-
-		// delete items that are in originalItems but not in items
-		for (let originalItem of data.cards) {
-			const item = items.find((i) => i.id === originalItem.id);
-			if (!item) {
-				console.log('deleting item', originalItem);
-				promises.push(
-					deleteRecord({ collection: 'app.blento.card', rkey: originalItem.id, did: data.did })
-				);
-			}
-		}
-
-		console.log(publication, data.publication);
-		if (!publication || publication !== JSON.stringify(data.publication)) {
-			data.publication ??= {
-				name: getName(data),
-				description: getDescription(data),
-				preferences: {
-					hideProfile: getHideProfile(data)
-				}
-			};
-
-			if (!data.publication.url) {
-				data.publication.url = 'https://blento.app/' + data.handle;
-
-				if (data.page !== 'blento.self') {
-					data.publication.url += '/' + data.page.replace('blento.', '');
-				}
-			}
-			promises.push(
-				putRecord({
-					collection: 'site.standard.publication',
-					rkey: data.page,
-					record: data.publication
-				})
-			);
-
-			publication = JSON.stringify(data.publication);
-
-			console.log('updating or adding publication', data.publication);
-		}
-
-		await Promise.all(promises);
-
-		isSaving = false;
-
-		fetch('/' + data.handle + '/api/refreshData').then(() => {
-			console.log('data refreshed!');
-		});
-		console.log('refreshing data');
-
-		toast('Saved', {
-			description: 'Your website has been saved!'
-		});
+		publication = JSON.stringify(data.publication);
 	}
 
 	const sidebarItems = AllCardDefinitions.filter(
@@ -249,33 +155,137 @@
 		e: DragEvent & {
 			currentTarget: EventTarget & HTMLDivElement;
 		}
-	) {
-		if (!container) return;
+	):
+		| { x: number; y: number; swapWithId: string | null; placement: 'above' | 'below' | null }
+		| undefined {
+		if (!container || !activeDragElement.item) return;
 
+		// x, y represent the top-left corner of the dragged card
 		const x = e.clientX + activeDragElement.mouseDeltaX;
 		const y = e.clientY + activeDragElement.mouseDeltaY;
 
 		const rect = container.getBoundingClientRect();
+		const currentMargin = isMobile ? mobileMargin : margin;
+		const cellSize = (rect.width - currentMargin * 2) / COLUMNS;
 
-		debugPoint.x = x - rect.left;
-		debugPoint.y = y - rect.top + margin;
-		console.log(rect.top);
+		// Get card dimensions based on current view mode
+		const cardW = isMobile
+			? (activeDragElement.item?.mobileW ?? activeDragElement.w)
+			: activeDragElement.w;
+		const cardH = isMobile
+			? (activeDragElement.item?.mobileH ?? activeDragElement.h)
+			: activeDragElement.h;
 
-		let gridX = clamp(
-			Math.floor(((x - rect.left) / rect.width) * 8),
-			0,
-			COLUMNS - (activeDragElement.w ?? 0)
-		);
+		// Get dragged card's original position
+		const draggedOrigPos = activeDragElement.originalPositions.get(activeDragElement.item.id);
+		const draggedOrigX = draggedOrigPos
+			? isMobile
+				? draggedOrigPos.mobileX
+				: draggedOrigPos.x
+			: 0;
+		const draggedOrigY = draggedOrigPos
+			? isMobile
+				? draggedOrigPos.mobileY
+				: draggedOrigPos.y
+			: 0;
+
+		// Calculate raw grid position based on top-left of dragged card
+		let gridX = clamp(Math.round((x - rect.left - currentMargin) / cellSize), 0, COLUMNS - cardW);
 		gridX = Math.floor(gridX / 2) * 2;
-		let gridY = Math.max(
-			Math.round(((y - rect.top + margin) / (rect.width - margin)) * COLUMNS),
-			0
-		);
+
+		let gridY = Math.max(Math.round((y - rect.top - currentMargin) / cellSize), 0);
+
 		if (isMobile) {
 			gridX = Math.floor(gridX / 2) * 2;
 			gridY = Math.floor(gridY / 2) * 2;
 		}
-		return { x: gridX, y: gridY };
+
+		// Find if we're hovering over another card (using ORIGINAL positions)
+		const centerGridY = gridY + cardH / 2;
+		const centerGridX = gridX + cardW / 2;
+
+		let swapWithId: string | null = null;
+		let placement: 'above' | 'below' | null = null;
+
+		for (const other of items) {
+			if (other === activeDragElement.item) continue;
+
+			// Use original positions for hit testing
+			const origPos = activeDragElement.originalPositions.get(other.id);
+			if (!origPos) continue;
+
+			const otherX = isMobile ? origPos.mobileX : origPos.x;
+			const otherY = isMobile ? origPos.mobileY : origPos.y;
+			const otherW = isMobile ? other.mobileW : other.w;
+			const otherH = isMobile ? other.mobileH : other.h;
+
+			// Check if dragged card's center point is within this card's original bounds
+			if (
+				centerGridX >= otherX &&
+				centerGridX < otherX + otherW &&
+				centerGridY >= otherY &&
+				centerGridY < otherY + otherH
+			) {
+				// Check if this is a swap situation:
+				// Cards have the same dimensions and are on the same row
+				const canSwap = cardW === otherW && cardH === otherH && draggedOrigY === otherY;
+
+				if (canSwap) {
+					// Swap positions
+					swapWithId = other.id;
+					gridX = otherX;
+					gridY = otherY;
+					placement = null;
+
+					activeDragElement.lastTargetId = other.id;
+					activeDragElement.lastPlacement = null;
+				} else {
+					// Vertical placement (above/below)
+					// Detect drag direction: if dragging up, always place above
+					const isDraggingUp = gridY < draggedOrigY;
+
+					if (isDraggingUp) {
+						// When dragging up, always place above
+						placement = 'above';
+					} else {
+						// When dragging down, use top/bottom half logic
+						const midpointY = otherY + otherH / 2;
+						const hysteresis = 0.3;
+
+						if (activeDragElement.lastTargetId === other.id && activeDragElement.lastPlacement) {
+							if (activeDragElement.lastPlacement === 'above') {
+								placement = centerGridY > midpointY + hysteresis ? 'below' : 'above';
+							} else {
+								placement = centerGridY < midpointY - hysteresis ? 'above' : 'below';
+							}
+						} else {
+							placement = centerGridY < midpointY ? 'above' : 'below';
+						}
+					}
+
+					activeDragElement.lastTargetId = other.id;
+					activeDragElement.lastPlacement = placement;
+
+					if (placement === 'above') {
+						gridY = otherY;
+					} else {
+						gridY = otherY + otherH;
+					}
+				}
+				break;
+			}
+		}
+
+		// If we're not over any card, clear the tracking
+		if (!swapWithId && !placement) {
+			activeDragElement.lastTargetId = null;
+			activeDragElement.lastPlacement = null;
+		}
+
+		debugPoint.x = x - rect.left;
+		debugPoint.y = y - rect.top + currentMargin;
+
+		return { x: gridX, y: gridY, swapWithId, placement };
 	}
 
 	let linkValue = $state('');
@@ -286,43 +296,209 @@
 			toast.error('invalid link');
 			return;
 		}
-
-		let item: Item = {
-			id: TID.nextStr(),
-			x: 0,
-			y: 0,
-			w: 2,
-			h: 2,
-			mobileH: 4,
-			mobileW: 4,
-			mobileX: 0,
-			mobileY: 0,
-			cardType: '',
-			cardData: {}
-		};
-
-		newItem.item = item;
-
-		console.log(AllCardDefinitions.toSorted(
-			(a, b) => (b.urlHandlerPriority ?? 0) - (a.urlHandlerPriority ?? 0)
-		));
+		let item = createEmptyCard(data.page);
 
 		for (const cardDef of AllCardDefinitions.toSorted(
 			(a, b) => (b.urlHandlerPriority ?? 0) - (a.urlHandlerPriority ?? 0)
 		)) {
 			if (cardDef.onUrlHandler?.(link, item)) {
 				item.cardType = cardDef.type;
+
+				newItem.item = item;
 				saveNewItem();
+				toast(cardDef.name + ' added!');
 				break;
 			}
 		}
 
-		newItem = {};
-
-		if(linkValue === url) {
+		if (linkValue === url) {
 			linkValue = '';
 			linkPopoverOpen = false;
 		}
+	}
+
+	async function processImageFile(file: File, gridX?: number, gridY?: number) {
+		const compressedFile = await compressImage(file);
+		const objectUrl = URL.createObjectURL(compressedFile);
+
+		let item = createEmptyCard(data.page);
+
+		item.cardType = 'image';
+		item.cardData = {
+			blob: compressedFile,
+			objectUrl
+		};
+
+		// If grid position is provided
+		if (gridX !== undefined && gridY !== undefined) {
+			if (isMobile) {
+				item.mobileX = gridX;
+				item.mobileY = gridY;
+			} else {
+				item.x = gridX;
+				item.y = gridY;
+			}
+
+			items = [...items, item];
+			fixCollisions(items, item, isMobile);
+		} else {
+			setPositionOfNewItem(item, items);
+			items = [...items, item];
+		}
+
+		await tick();
+
+		scrollToItem(item, isMobile, container);
+	}
+
+	function handleImageDragOver(event: DragEvent) {
+		const dt = event.dataTransfer;
+		if (!dt) return;
+
+		let hasImage = false;
+		if (dt.items) {
+			for (let i = 0; i < dt.items.length; i++) {
+				const item = dt.items[i];
+				if (item && item.kind === 'file' && item.type.startsWith('image/')) {
+					hasImage = true;
+					break;
+				}
+			}
+		} else if (dt.files) {
+			for (let i = 0; i < dt.files.length; i++) {
+				const file = dt.files[i];
+				if (file?.type.startsWith('image/')) {
+					hasImage = true;
+					break;
+				}
+			}
+		}
+
+		if (hasImage) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			imageDragOver = true;
+			imageDragPosition = { x: event.clientX, y: event.clientY };
+		}
+	}
+
+	function handleImageDragLeave(event: DragEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+		imageDragOver = false;
+		imageDragPosition = null;
+	}
+
+	async function handleImageDrop(event: DragEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+		const dropX = event.clientX;
+		const dropY = event.clientY;
+		imageDragOver = false;
+		imageDragPosition = null;
+
+		if (!event.dataTransfer?.files?.length) return;
+
+		const imageFiles = Array.from(event.dataTransfer.files).filter((f) =>
+			f?.type.startsWith('image/')
+		);
+		if (imageFiles.length === 0) return;
+
+		// Calculate starting grid position from drop coordinates
+		let gridX = 0;
+		let gridY = 0;
+		if (container) {
+			const rect = container.getBoundingClientRect();
+			const currentMargin = isMobile ? mobileMargin : margin;
+			const cellSize = (rect.width - currentMargin * 2) / COLUMNS;
+			const cardW = isMobile ? 4 : 2;
+
+			gridX = clamp(Math.round((dropX - rect.left - currentMargin) / cellSize), 0, COLUMNS - cardW);
+			gridX = Math.floor(gridX / 2) * 2;
+
+			gridY = Math.max(Math.round((dropY - rect.top - currentMargin) / cellSize), 0);
+			if (isMobile) {
+				gridY = Math.floor(gridY / 2) * 2;
+			}
+		}
+
+		for (const file of imageFiles) {
+			await processImageFile(file, gridX, gridY);
+
+			// Move to next cell position
+			const cardW = isMobile ? 4 : 2;
+			gridX += cardW;
+			if (gridX + cardW > COLUMNS) {
+				gridX = 0;
+				gridY += isMobile ? 4 : 2;
+			}
+		}
+	}
+
+	async function handleImageInputChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (!target.files || target.files.length < 1) return;
+
+		const files = Array.from(target.files);
+
+		if (files.length === 1) {
+			// Single file: use default positioning
+			await processImageFile(files[0]);
+		} else {
+			// Multiple files: place in grid pattern starting from first available position
+			let gridX = 0;
+			let gridY = maxHeight;
+			const cardW = isMobile ? 4 : 2;
+			const cardH = isMobile ? 4 : 2;
+
+			for (const file of files) {
+				await processImageFile(file, gridX, gridY);
+
+				// Move to next cell position
+				gridX += cardW;
+				if (gridX + cardW > COLUMNS) {
+					gridX = 0;
+					gridY += cardH;
+				}
+			}
+		}
+
+		// Reset the input so the same file can be selected again
+		target.value = '';
+	}
+
+	async function processVideoFile(file: File) {
+		const objectUrl = URL.createObjectURL(file);
+
+		let item = createEmptyCard(data.page);
+
+		item.cardType = 'video';
+		item.cardData = {
+			blob: file,
+			objectUrl
+		};
+
+		setPositionOfNewItem(item, items);
+		items = [...items, item];
+
+		await tick();
+
+		scrollToItem(item, isMobile, container);
+	}
+
+	async function handleVideoInputChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (!target.files || target.files.length < 1) return;
+
+		const files = Array.from(target.files);
+
+		for (const file of files) {
+			await processVideoFile(file);
+		}
+
+		// Reset the input so the same file can be selected again
+		target.value = '';
 	}
 </script>
 
@@ -338,6 +514,12 @@
 	}}
 />
 
+<svelte:window
+	ondragover={handleImageDragOver}
+	ondragleave={handleImageDragLeave}
+	ondrop={handleImageDrop}
+/>
+
 <Head
 	favicon={data.profile.avatar ?? null}
 	title={getName(data)}
@@ -347,7 +529,22 @@
 <Settings bind:open={showSettings} bind:data />
 
 <Context {data}>
-	<!-- <ImageDropper processImageFile={(file: File) => {}} /> -->
+	<input
+		type="file"
+		accept="image/*"
+		onchange={handleImageInputChange}
+		class="hidden"
+		multiple
+		bind:this={imageInputRef}
+	/>
+	<input
+		type="file"
+		accept="video/*"
+		onchange={handleVideoInputChange}
+		class="hidden"
+		multiple
+		bind:this={videoInputRef}
+	/>
 
 	{#if !dev}
 		<div
@@ -359,7 +556,7 @@
 
 	{#if showingMobileView}
 		<div
-			class="bg-base-200 dark:bg-base-900 pointer-events-none fixed inset-0 -z-10 h-full w-full"
+			class="bg-base-200 dark:bg-base-950 pointer-events-none fixed inset-0 -z-10 h-full w-full"
 		></div>
 	{/if}
 
@@ -379,7 +576,7 @@
 		class={[
 			'@container/wrapper relative w-full',
 			showingMobileView
-				? 'bg-base-50 dark:bg-base-950 my-4 min-h-[calc(100dhv-2em)] rounded-2xl lg:mx-auto lg:w-[400px]'
+				? 'bg-base-50 dark:bg-base-900 my-4 min-h-[calc(100dhv-2em)] rounded-2xl lg:mx-auto lg:w-[375px]'
 				: ''
 		]}
 	>
@@ -402,21 +599,57 @@
 				ondragover={(e) => {
 					e.preventDefault();
 
-					const cell = getDragXY(e);
-					if (!cell) return;
+					const result = getDragXY(e);
+					if (!result) return;
 
-					activeDragElement.x = cell.x;
-					activeDragElement.y = cell.y;
+					activeDragElement.x = result.x;
+					activeDragElement.y = result.y;
 
 					if (activeDragElement.item) {
-						if (isMobile) {
-							activeDragElement.item.mobileX = cell.x;
-							activeDragElement.item.mobileY = cell.y;
-						} else {
-							activeDragElement.item.x = cell.x;
-							activeDragElement.item.y = cell.y;
+						// Get dragged card's original position for swapping
+						const draggedOrigPos = activeDragElement.originalPositions.get(
+							activeDragElement.item.id
+						);
+
+						// Reset all items to original positions first
+						for (const it of items) {
+							const origPos = activeDragElement.originalPositions.get(it.id);
+							if (origPos && it !== activeDragElement.item) {
+								if (isMobile) {
+									it.mobileX = origPos.mobileX;
+									it.mobileY = origPos.mobileY;
+								} else {
+									it.x = origPos.x;
+									it.y = origPos.y;
+								}
+							}
 						}
 
+						// Update dragged item position
+						if (isMobile) {
+							activeDragElement.item.mobileX = result.x;
+							activeDragElement.item.mobileY = result.y;
+						} else {
+							activeDragElement.item.x = result.x;
+							activeDragElement.item.y = result.y;
+						}
+
+						// Handle horizontal swap
+						if (result.swapWithId && draggedOrigPos) {
+							const swapTarget = items.find((it) => it.id === result.swapWithId);
+							if (swapTarget) {
+								// Move swap target to dragged card's original position
+								if (isMobile) {
+									swapTarget.mobileX = draggedOrigPos.mobileX;
+									swapTarget.mobileY = draggedOrigPos.mobileY;
+								} else {
+									swapTarget.x = draggedOrigPos.x;
+									swapTarget.y = draggedOrigPos.y;
+								}
+							}
+						}
+
+						// Now fix collisions (with compacting)
 						fixCollisions(items, activeDragElement.item, isMobile);
 					}
 
@@ -449,14 +682,21 @@
 							activeDragElement.item.y = cell.y;
 						}
 
+						// Fix collisions and compact items after drag ends
 						fixCollisions(items, activeDragElement.item, isMobile);
 					}
 					activeDragElement.x = -1;
 					activeDragElement.y = -1;
 					activeDragElement.element = null;
+					activeDragElement.item = null;
+					activeDragElement.lastTargetId = null;
+					activeDragElement.lastPlacement = null;
 					return true;
 				}}
-				class="@container/grid relative col-span-3 px-2 py-8 @5xl/wrapper:px-8"
+				class={[
+					'@container/grid relative col-span-3 rounded-4xl px-2 py-8 @5xl/wrapper:px-8',
+					imageDragOver && 'outline-accent-500 outline-3 -outline-offset-10 outline-dashed'
+				]}
 			>
 				{#each items as item, i (item.id)}
 					<!-- {#if item !== activeDragElement.item} -->
@@ -484,11 +724,20 @@
 							activeDragElement.h = item.h;
 							activeDragElement.item = item;
 
+							// Store original positions of all items
+							activeDragElement.originalPositions = new Map();
+							for (const it of items) {
+								activeDragElement.originalPositions.set(it.id, {
+									x: it.x,
+									y: it.y,
+									mobileX: it.mobileX,
+									mobileY: it.mobileY
+								});
+							}
+
 							const rect = target.getBoundingClientRect();
 							activeDragElement.mouseDeltaX = rect.left - e.clientX;
 							activeDragElement.mouseDeltaY = rect.top - e.clientY;
-							console.log(activeDragElement.mouseDeltaY);
-							console.log(rect.width);
 						}}
 					>
 						<EditingCard bind:item={items[i]} />
@@ -530,6 +779,26 @@
 					variant="ghost"
 					class="backdrop-blur-none"
 					onclick={() => {
+						newCard('section');
+					}}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><path d="M6 12h12" /><path d="M6 20V4" /><path d="M18 20V4" /></svg
+					>
+				</Button>
+
+				<Button
+					size="iconLg"
+					variant="ghost"
+					class="backdrop-blur-none"
+					onclick={() => {
 						newCard('text');
 					}}
 				>
@@ -539,7 +808,7 @@
 							stroke="currentColor"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							stroke-width="1.5"
+							stroke-width="2"
 							d="m15 16l2.536-7.328a1.02 1.02 1 0 1 1.928 0L22 16m-6.303-2h5.606M2 16l4.039-9.69a.5.5 0 0 1 .923 0L11 16m-7.696-3h6.392"
 						/></svg
 					>
@@ -560,7 +829,7 @@
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
 								viewBox="-2 -2 28 28"
-								stroke-width="1.5"
+								stroke-width="2"
 								stroke="currentColor"
 							>
 								<path
@@ -588,7 +857,7 @@
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke-width="1.5"
+							stroke-width="2"
 							stroke="currentColor"
 							class="size-6"
 						>
@@ -602,14 +871,14 @@
 					variant="ghost"
 					class="backdrop-blur-none"
 					onclick={() => {
-						newCard('image');
+						imageInputRef?.click();
 					}}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
-						stroke-width="1.5"
+						stroke-width="2"
 						stroke="currentColor"
 					>
 						<path
@@ -619,6 +888,31 @@
 						/>
 					</svg>
 				</Button>
+
+				{#if dev}
+					<Button
+						size="iconLg"
+						variant="ghost"
+						class="backdrop-blur-none"
+						onclick={() => {
+							videoInputRef?.click();
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+							/>
+						</svg>
+					</Button>
+				{/if}
 
 				<Button
 					size="iconLg"

@@ -179,6 +179,7 @@
 	class="scale-100 opacity-100 starting:scale-0 starting:opacity-0"
 	{...rest}
 >
+	<div class="absolute inset-0 cursor-grab"></div>
 	{@render children?.()}
 
 	{#snippet controls()}

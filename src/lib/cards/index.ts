@@ -13,10 +13,13 @@ import { SectionCardDefinition } from './SectionCard';
 import { UpdatedBlentosCardDefitition } from './SpecialCards/UpdatedBlentos';
 import { TextCardDefinition } from './TextCard';
 import type { CardDefinition } from './types';
-import { YoutubeCardDefinition } from './YoutubeVideo';
+import { VideoCardDefinition } from './VideoCard';
+import { YoutubeCardDefinition } from './YoutubeVideoCard';
+import { BlueskyProfileCardDefinition } from './BlueskyProfileCard';
 
 export const AllCardDefinitions = [
 	ImageCardDefinition,
+	VideoCardDefinition,
 	TextCardDefinition,
 	LinkCardDefinition,
 	BigSocialCardDefinition,
@@ -30,7 +33,8 @@ export const AllCardDefinitions = [
 	ATProtoCollectionsCardDefinition,
 	SectionCardDefinition,
 	BlueskyMediaCardDefinition,
-	DinoGameCardDefinition
+	DinoGameCardDefinition,
+	BlueskyProfileCardDefinition
 ] as const;
 
 export const CardDefinitionsByType = AllCardDefinitions.reduce(
