@@ -1,18 +1,18 @@
-# Todo for beta
+# Todo for beta version
 
 - fix opengraph image stuff
 
 - site.standard
-  - move subpages to own lexicon
+  - move subpages to own lexicon (app.blento.page)
   - move description to markdownDescription and set description as text only
 
-- fix recent blentos only showing the last ~5
+- fix recent blentos only showing the last ~5 blentos
 
 - card with big call to action button
 
 - link card: save favicon and og image as blobs
 
-- video card
+- video card?
 
 - allow changing profile picture
 

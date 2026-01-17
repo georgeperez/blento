@@ -779,6 +779,26 @@
 					variant="ghost"
 					class="backdrop-blur-none"
 					onclick={() => {
+						newCard('section');
+					}}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><path d="M6 12h12" /><path d="M6 20V4" /><path d="M18 20V4" /></svg
+					>
+				</Button>
+
+				<Button
+					size="iconLg"
+					variant="ghost"
+					class="backdrop-blur-none"
+					onclick={() => {
 						newCard('text');
 					}}
 				>
@@ -788,7 +808,7 @@
 							stroke="currentColor"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							stroke-width="1.5"
+							stroke-width="2"
 							d="m15 16l2.536-7.328a1.02 1.02 1 0 1 1.928 0L22 16m-6.303-2h5.606M2 16l4.039-9.69a.5.5 0 0 1 .923 0L11 16m-7.696-3h6.392"
 						/></svg
 					>
@@ -809,7 +829,7 @@
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
 								viewBox="-2 -2 28 28"
-								stroke-width="1.5"
+								stroke-width="2"
 								stroke="currentColor"
 							>
 								<path
@@ -837,7 +857,7 @@
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke-width="1.5"
+							stroke-width="2"
 							stroke="currentColor"
 							class="size-6"
 						>
@@ -858,7 +878,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
-						stroke-width="1.5"
+						stroke-width="2"
 						stroke="currentColor"
 					>
 						<path
@@ -870,28 +890,28 @@
 				</Button>
 
 				{#if dev}
-				<Button
-					size="iconLg"
-					variant="ghost"
-					class="backdrop-blur-none"
-					onclick={() => {
-						videoInputRef?.click();
-					}}
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
+					<Button
+						size="iconLg"
+						variant="ghost"
+						class="backdrop-blur-none"
+						onclick={() => {
+							videoInputRef?.click();
+						}}
 					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
-						/>
-					</svg>
-				</Button>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+							/>
+						</svg>
+					</Button>
 				{/if}
 
 				<Button
