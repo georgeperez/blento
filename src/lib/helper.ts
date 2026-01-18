@@ -292,9 +292,12 @@ export function getDescription(data: WebsiteData): string {
 	return data.publication?.description ?? data.profile.description ?? '';
 }
 
-export function getHideProfile(data: WebsiteData): boolean {
-	if (data?.publication?.preferences?.hideProfile === false) return false;
-	if (data?.publication?.preferences?.hideProfile === true) return true;
+export function getHideProfileSection(data: WebsiteData): boolean {
+	if (data?.publication?.preferences?.hideProfileSection !== undefined)
+		return data?.publication?.preferences?.hideProfileSection;
+
+	if (data?.publication?.preferences?.hideProfile !== undefined)
+		return data?.publication?.preferences?.hideProfile;
 
 	return data.page !== 'blento.self';
 }
@@ -449,12 +452,19 @@ export async function savePage(
 		}
 	}
 
+	if (
+		data.publication?.preferences?.hideProfile !== undefined &&
+		data.publication?.preferences?.hideProfileSection === undefined
+	) {
+		data.publication.preferences.hideProfileSection = data.publication?.preferences?.hideProfile;
+	}
+
 	if (!originalPublication || originalPublication !== JSON.stringify(data.publication)) {
 		data.publication ??= {
 			name: getName(data),
 			description: getDescription(data),
 			preferences: {
-				hideProfile: getHideProfile(data)
+				hideProfileSection: getHideProfileSection(data)
 			}
 		};
 

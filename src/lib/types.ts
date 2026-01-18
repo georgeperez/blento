@@ -41,7 +41,14 @@ export type WebsiteData = {
 				description?: string;
 				icon?: At.Blob;
 				preferences?: {
+					/**
+					 * @deprecated
+					 *
+					 * use hideProfileSection instead
+					 */
 					hideProfile?: boolean;
+					// use this instead
+					hideProfileSection?: boolean;
 				};
 		  }
 		| undefined;

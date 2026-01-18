@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Card from '../cards/Card/Card.svelte';
 	import Profile from './Profile.svelte';
-	import { getDescription, getHideProfile, getName, sortItems } from '../helper';
+	import { getDescription, getHideProfileSection, getName, sortItems } from '../helper';
 	import { innerWidth } from 'svelte/reactivity/window';
 	import { setDidContext, setHandleContext, setIsMobile } from './context';
 	import BaseCard from '../cards/BaseCard/BaseCard.svelte';
@@ -38,14 +38,14 @@
 
 <Context {data}>
 	<div class="@container/wrapper relative w-full">
-		{#if !getHideProfile(data)}
+		{#if !getHideProfileSection(data)}
 			<Profile {data} showEditButton={true} />
 		{/if}
 
 		<div
 			class={[
 				'mx-auto max-w-lg',
-				!getHideProfile(data)
+				!getHideProfileSection(data)
 					? '@5xl/wrapper:grid @5xl/wrapper:max-w-7xl @5xl/wrapper:grid-cols-4'
 					: '@5xl/wrapper:max-w-4xl'
 			]}

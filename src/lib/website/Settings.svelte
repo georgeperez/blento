@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getDescription, getHideProfile, getName } from '$lib/helper';
+	import { getDescription, getHideProfileSection, getName } from '$lib/helper';
 	import type { WebsiteData } from '$lib/types';
 	import { Button, Checkbox, Heading, Input, Label, Modal, Textarea } from '@foxui/core';
 
@@ -45,7 +45,7 @@
 		<Checkbox
 			bind:checked={
 				() => {
-					return getHideProfile(data);
+					return getHideProfileSection(data);
 				},
 				(value) => {
 					data.publication ??= {};

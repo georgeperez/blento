@@ -1,6 +1,6 @@
 # Todo for beta version
 
-- fix opengraph image stuff
+- fix opengraph image stuff (caching issue?)
 
 - site.standard
   - move subpages to own lexicon (app.blento.page)
@@ -33,3 +33,5 @@
 - when adding images try to add them in a size that best fits aspect ratio
 
 - onboarding
+
+- show alert when user tries to close window with unsaved changes

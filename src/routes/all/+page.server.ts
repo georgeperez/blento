@@ -28,7 +28,7 @@ export async function load({ platform }) {
 
 	data.publication ??= {};
 	data.publication.preferences ??= {};
-	data.publication.preferences.hideProfile = true;
+	data.publication.preferences.hideProfileSection = true;
 
 	return { ...data, profiles };
 }

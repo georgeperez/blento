@@ -10,7 +10,7 @@
 		compactItems,
 		createEmptyCard,
 		fixCollisions,
-		getHideProfile,
+		getHideProfileSection,
 		getName,
 		isTyping,
 		savePage,
@@ -580,14 +580,14 @@
 				: ''
 		]}
 	>
-		{#if !getHideProfile(data)}
+		{#if !getHideProfileSection(data)}
 			<Profile {data} />
 		{/if}
 
 		<div
 			class={[
 				'mx-auto max-w-lg',
-				!getHideProfile(data)
+				!getHideProfileSection(data)
 					? '@5xl/wrapper:grid @5xl/wrapper:max-w-7xl @5xl/wrapper:grid-cols-4'
 					: '@5xl/wrapper:max-w-4xl'
 			]}
