@@ -1,4 +1,3 @@
-import { uploadBlob } from '$lib/oauth/utils';
 import type { CardDefinition } from '../types';
 import EditingGifCard from './EditingGifCard.svelte';
 import GifCard from './GifCard.svelte';
@@ -18,19 +17,6 @@ export const GifCardDefinition = {
 		card.h = 2;
 		card.mobileW = 4;
 		card.mobileH = 4;
-	},
-	upload: async (item) => {
-		if (item.cardData.blob) {
-			item.cardData.image = await uploadBlob(item.cardData.blob);
-			delete item.cardData.blob;
-		}
-
-		if (item.cardData.objectUrl) {
-			URL.revokeObjectURL(item.cardData.objectUrl);
-			delete item.cardData.objectUrl;
-		}
-
-		return item;
 	},
 	settingsComponent: GifCardSettings,
 	sidebarButtonText: 'GIF',
