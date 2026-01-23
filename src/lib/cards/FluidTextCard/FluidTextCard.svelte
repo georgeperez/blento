@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { ContentComponentProps } from '../types';
 	import { onMount, onDestroy, tick } from 'svelte';
-	import ditheringTextureUrl from './LDR_LLL1_0.png';
-
 	let { item }: ContentComponentProps = $props();
 
 	let container: HTMLDivElement;
@@ -14,6 +12,99 @@
 	let maskReady = false;
 	let isInitialized = $state(false);
 	let resizeObserver: ResizeObserver | null = null;
+
+	// Pure hash function for shader keyword caching
+	function hashCode(s: string) {
+		if (s.length === 0) return 0;
+		let hash = 0;
+		for (let i = 0; i < s.length; i++) {
+			hash = (hash << 5) - hash + s.charCodeAt(i);
+			hash |= 0;
+		}
+		return hash;
+	}
+
+	// WebGL helper types
+	type CompileShaderFn = (type: number, source: string, keywords?: string[]) => WebGLShader;
+	type CreateProgramFn = (vs: WebGLShader, fs: WebGLShader) => WebGLProgram;
+	type GetUniformsFn = (program: WebGLProgram) => Record<string, WebGLUniformLocation | null>;
+
+	// Material class for shader programs with keyword variants
+	class Material {
+		private gl: WebGL2RenderingContext;
+		private compileShader: CompileShaderFn;
+		private createProgramFn: CreateProgramFn;
+		private getUniformsFn: GetUniformsFn;
+		vertexShader: WebGLShader;
+		fragmentShaderSource: string;
+		programs: Record<number, WebGLProgram> = {};
+		activeProgram: WebGLProgram | null = null;
+		uniforms: Record<string, WebGLUniformLocation | null> = {};
+
+		constructor(
+			gl: WebGL2RenderingContext,
+			vertexShader: WebGLShader,
+			fragmentShaderSource: string,
+			compileShader: CompileShaderFn,
+			createProgramFn: CreateProgramFn,
+			getUniformsFn: GetUniformsFn
+		) {
+			this.gl = gl;
+			this.compileShader = compileShader;
+			this.createProgramFn = createProgramFn;
+			this.getUniformsFn = getUniformsFn;
+			this.vertexShader = vertexShader;
+			this.fragmentShaderSource = fragmentShaderSource;
+		}
+
+		setKeywords(keywords: string[]) {
+			let hash = 0;
+			for (let i = 0; i < keywords.length; i++) hash += hashCode(keywords[i]);
+
+			let program = this.programs[hash];
+			if (!program) {
+				const fragmentShader = this.compileShader(
+					this.gl.FRAGMENT_SHADER,
+					this.fragmentShaderSource,
+					keywords
+				);
+				program = this.createProgramFn(this.vertexShader, fragmentShader);
+				this.programs[hash] = program;
+			}
+
+			if (program === this.activeProgram) return;
+
+			this.uniforms = this.getUniformsFn(program);
+			this.activeProgram = program;
+		}
+
+		bind() {
+			this.gl.useProgram(this.activeProgram);
+		}
+	}
+
+	// Program class for simple shader programs
+	class Program {
+		private gl: WebGL2RenderingContext;
+		uniforms: Record<string, WebGLUniformLocation | null> = {};
+		program: WebGLProgram;
+
+		constructor(
+			gl: WebGL2RenderingContext,
+			vertexShader: WebGLShader,
+			fragmentShader: WebGLShader,
+			createProgramFn: CreateProgramFn,
+			getUniformsFn: GetUniformsFn
+		) {
+			this.gl = gl;
+			this.program = createProgramFn(vertexShader, fragmentShader);
+			this.uniforms = getUniformsFn(this.program);
+		}
+
+		bind() {
+			this.gl.useProgram(this.program);
+		}
+	}
 
 	// Get text from card data
 	const text = $derived((item.cardData?.text as string) || 'hello');
@@ -180,8 +271,9 @@
 		let pointers: Pointer[] = [PointerPrototype()];
 		let splatStack: number[] = [];
 
-		const { gl, ext } = getWebGLContext(fluidCanvas);
-		if (!gl) return;
+		const { gl: glMaybeNull, ext } = getWebGLContext(fluidCanvas);
+		if (!glMaybeNull) return;
+		const gl = glMaybeNull;
 
 		if (isMobile()) {
 			config.DYE_RESOLUTION = 512;
@@ -316,59 +408,7 @@
 			return /Mobi|Android/i.test(navigator.userAgent);
 		}
 
-		class Material {
-			vertexShader: WebGLShader;
-			fragmentShaderSource: string;
-			programs: Record<number, WebGLProgram> = {};
-			activeProgram: WebGLProgram | null = null;
-			uniforms: Record<string, WebGLUniformLocation | null> = {};
-
-			constructor(vertexShader: WebGLShader, fragmentShaderSource: string) {
-				this.vertexShader = vertexShader;
-				this.fragmentShaderSource = fragmentShaderSource;
-			}
-
-			setKeywords(keywords: string[]) {
-				let hash = 0;
-				for (let i = 0; i < keywords.length; i++) hash += hashCode(keywords[i]);
-
-				let program = this.programs[hash];
-				if (!program) {
-					const fragmentShader = compileShader(
-						gl.FRAGMENT_SHADER,
-						this.fragmentShaderSource,
-						keywords
-					);
-					program = createProgram(this.vertexShader, fragmentShader);
-					this.programs[hash] = program;
-				}
-
-				if (program === this.activeProgram) return;
-
-				this.uniforms = getUniforms(program);
-				this.activeProgram = program;
-			}
-
-			bind() {
-				gl.useProgram(this.activeProgram);
-			}
-		}
-
-		class Program {
-			uniforms: Record<string, WebGLUniformLocation | null> = {};
-			program: WebGLProgram;
-
-			constructor(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
-				this.program = createProgram(vertexShader, fragmentShader);
-				this.uniforms = getUniforms(this.program);
-			}
-
-			bind() {
-				gl.useProgram(this.program);
-			}
-		}
-
-		function createProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
+		function createWebGLProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
 			const program = gl.createProgram()!;
 			gl.attachShader(program, vertexShader);
 			gl.attachShader(program, fragmentShader);
@@ -848,23 +888,21 @@
 		let sunrays: FBO;
 		let sunraysTemp: FBO;
 
-		const ditheringTexture = createTextureAsync(ditheringTextureUrl);
+		const blurProgram = new Program(gl, blurVertexShader, blurShader, createWebGLProgram, getUniforms);
+		const copyProgram = new Program(gl, baseVertexShader, copyShader, createWebGLProgram, getUniforms);
+		const clearProgram = new Program(gl, baseVertexShader, clearShader, createWebGLProgram, getUniforms);
+		const colorProgram = new Program(gl, baseVertexShader, colorShader, createWebGLProgram, getUniforms);
+		const splatProgram = new Program(gl, baseVertexShader, splatShader, createWebGLProgram, getUniforms);
+		const advectionProgram = new Program(gl, baseVertexShader, advectionShader, createWebGLProgram, getUniforms);
+		const divergenceProgram = new Program(gl, baseVertexShader, divergenceShader, createWebGLProgram, getUniforms);
+		const curlProgram = new Program(gl, baseVertexShader, curlShader, createWebGLProgram, getUniforms);
+		const vorticityProgram = new Program(gl, baseVertexShader, vorticityShader, createWebGLProgram, getUniforms);
+		const pressureProgram = new Program(gl, baseVertexShader, pressureShader, createWebGLProgram, getUniforms);
+		const gradienSubtractProgram = new Program(gl, baseVertexShader, gradientSubtractShader, createWebGLProgram, getUniforms);
+		const sunraysMaskProgram = new Program(gl, baseVertexShader, sunraysMaskShader, createWebGLProgram, getUniforms);
+		const sunraysProgram = new Program(gl, baseVertexShader, sunraysShader, createWebGLProgram, getUniforms);
 
-		const blurProgram = new Program(blurVertexShader, blurShader);
-		const copyProgram = new Program(baseVertexShader, copyShader);
-		const clearProgram = new Program(baseVertexShader, clearShader);
-		const colorProgram = new Program(baseVertexShader, colorShader);
-		const splatProgram = new Program(baseVertexShader, splatShader);
-		const advectionProgram = new Program(baseVertexShader, advectionShader);
-		const divergenceProgram = new Program(baseVertexShader, divergenceShader);
-		const curlProgram = new Program(baseVertexShader, curlShader);
-		const vorticityProgram = new Program(baseVertexShader, vorticityShader);
-		const pressureProgram = new Program(baseVertexShader, pressureShader);
-		const gradienSubtractProgram = new Program(baseVertexShader, gradientSubtractShader);
-		const sunraysMaskProgram = new Program(baseVertexShader, sunraysMaskShader);
-		const sunraysProgram = new Program(baseVertexShader, sunraysShader);
-
-		const displayMaterial = new Material(baseVertexShader, displayShaderSource);
+		const displayMaterial = new Material(gl, baseVertexShader, displayShaderSource, compileShader, createWebGLProgram, getUniforms);
 
 		function getResolution(resolution: number) {
 			let aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
@@ -985,48 +1023,6 @@
 			target.texelSizeX = 1.0 / w;
 			target.texelSizeY = 1.0 / h;
 			return target;
-		}
-
-		function createTextureAsync(url: string) {
-			const texture = gl.createTexture()!;
-			gl.bindTexture(gl.TEXTURE_2D, texture);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-			gl.texImage2D(
-				gl.TEXTURE_2D,
-				0,
-				gl.RGB,
-				1,
-				1,
-				0,
-				gl.RGB,
-				gl.UNSIGNED_BYTE,
-				new Uint8Array([255, 255, 255])
-			);
-
-			const obj = {
-				texture,
-				width: 1,
-				height: 1,
-				attach(id: number) {
-					gl.activeTexture(gl.TEXTURE0 + id);
-					gl.bindTexture(gl.TEXTURE_2D, texture);
-					return id;
-				}
-			};
-
-			const image = new Image();
-			image.onload = () => {
-				obj.width = image.width;
-				obj.height = image.height;
-				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-			};
-			image.src = url;
-
-			return obj;
 		}
 
 		function initFramebuffers() {
@@ -1450,16 +1446,6 @@
 			if (!config.PAUSED) step(dt);
 			render(null);
 			animationId = requestAnimationFrame(update);
-		}
-
-		function hashCode(s: string) {
-			if (s.length === 0) return 0;
-			let hash = 0;
-			for (let i = 0; i < s.length; i++) {
-				hash = (hash << 5) - hash + s.charCodeAt(i);
-				hash |= 0;
-			}
-			return hash;
 		}
 
 		function correctDeltaX(delta: number) {
