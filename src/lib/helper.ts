@@ -274,7 +274,7 @@ export async function refreshData(data: { updatedAt?: number; handle: string }) 
 
 	if (now - (data.updatedAt || 0) > TEN_MINUTES) {
 		try {
-			await fetch('/' + data.handle + '/api/refreshData');
+			await fetch('/' + data.handle + '/api/refresh');
 			console.log('successfully refreshed data', data.handle);
 		} catch (error) {
 			console.error('error refreshing data', error);
@@ -486,7 +486,7 @@ export async function savePage(
 
 	await Promise.all(promises);
 
-	fetch('/' + data.handle + '/api/refreshData').then(() => {
+	fetch('/' + data.handle + '/api/refresh').then(() => {
 		console.log('data refreshed!');
 	});
 	console.log('refreshing data');
