@@ -36,7 +36,9 @@
 		: ''}"
 	onclick={handleClick}
 >
-	<FluidTextCard {item} />
+	{#key item.color}
+		<FluidTextCard {item} />
+	{/key}
 
 	{#if isEditing}
 		<!-- svelte-ignore a11y_autofocus -->

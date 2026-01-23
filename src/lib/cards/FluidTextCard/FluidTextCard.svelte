@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { colorToHue, getCSSVar } from '../helper';
 	import type { ContentComponentProps } from '../types';
 	import { onMount, onDestroy, tick } from 'svelte';
 	let { item }: ContentComponentProps = $props();
@@ -131,6 +132,8 @@
 		ctx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
 		ctx.scale(dpr, dpr);
 
+		//const color = getCSSVar('--color-base-900');
+
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, width, height);
 
@@ -195,9 +198,19 @@
 	onMount(async () => {
 		// Wait for layout to settle
 		await tick();
+
+		let color =
+			!item.color || item.color === 'transparent' || item.color === 'base'
+				? 'accent'
+				: item.color;
+
+		const computedColor = getCSSVar(`--color-${color}-500`);
+		const hue = colorToHue(computedColor) / 360;
+		console.log(computedColor, hue);
+
 		// Wait for a frame to ensure dimensions are set
 		requestAnimationFrame(() => {
-			initFluidSimulation();
+			initFluidSimulation(hue, hue - 0.3);
 		});
 
 		if (document.fonts?.ready) {
@@ -214,7 +227,7 @@
 		if (resizeObserver) resizeObserver.disconnect();
 	});
 
-	function initFluidSimulation() {
+	function initFluidSimulation(startHue: number, endHue: number) {
 		if (!fluidCanvas || !maskCanvas || !container) return;
 
 		maskReady = false;
@@ -247,8 +260,8 @@
 			SUNRAYS: true,
 			SUNRAYS_RESOLUTION: 196,
 			SUNRAYS_WEIGHT: 1.0,
-			START_HUE: 0.5,
-			END_HUE: 1.0,
+			START_HUE: startHue,
+			END_HUE: endHue,
 			RENDER_SPEED: 0.4
 		};
 
@@ -1510,7 +1523,9 @@
 		function calcDeltaTime() {
 			const now = Date.now();
 			let dt = (now - lastUpdateTime) / 1000;
-			dt = Math.min(dt, 0.016666);
+			// Allow up to ~30fps worth of time to pass per frame to handle browser throttling
+			// This prevents the simulation from appearing to slow down when RAF is throttled
+			dt = Math.min(dt, 0.033);
 			lastUpdateTime = now;
 			return dt;
 		}

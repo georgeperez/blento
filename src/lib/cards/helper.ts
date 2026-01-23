@@ -1,0 +1,14 @@
+import { convertCSSToHex, hex_to_okhsv } from '@foxui/colors';
+
+export function getCSSVar(variable: string) {
+	return getComputedStyle(document.body).getPropertyValue(variable).trim();
+}
+
+/**
+ * Converts a CSS color string to a hue value in the 0-1 range
+ */
+export function colorToHue(color: string): number {
+	const hex = convertCSSToHex(color);
+	const okhsv = hex_to_okhsv(hex);
+	return okhsv.h;
+}
