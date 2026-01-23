@@ -40,7 +40,7 @@ export async function initClient() {
 
 	const clientId = dev
 		? `http://localhost` +
-			`?redirect_uri=${encodeURIComponent('http://127.0.0.1:5179')}` +
+			`?redirect_uri=${encodeURIComponent('http://127.0.0.1:5179/oauth/callback')}` +
 			`&scope=${encodeURIComponent(metadata.scope)}`
 		: metadata.client_id;
 
@@ -54,7 +54,7 @@ export async function initClient() {
 	configureOAuth({
 		metadata: {
 			client_id: clientId,
-			redirect_uri: `${dev ? 'http://127.0.0.1:5179' : metadata.redirect_uris[0]}`
+			redirect_uri: dev ? 'http://127.0.0.1:5179/oauth/callback' : metadata.redirect_uris[0]
 		},
 		identityResolver: new LocalActorResolver({
 			handleResolver: handleResolver,

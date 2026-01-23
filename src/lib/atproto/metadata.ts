@@ -25,7 +25,7 @@ function constructScope() {
 
 export const metadata = {
 	client_id: SITE + resolve('/oauth-client-metadata.json'),
-	redirect_uris: [SITE + resolve('/')],
+	redirect_uris: [SITE + resolve('/oauth/callback')],
 	scope: constructScope(),
 	grant_types: ['authorization_code', 'refresh_token'],
 	response_types: ['code'],
