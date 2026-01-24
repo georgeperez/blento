@@ -28,7 +28,7 @@
 				item.cardData.lon = data.lon;
 				item.cardData.name = data.display_name?.split(',')[0] || search;
 				item.cardData.type = data.class || 'city';
-				item.cardData.zoom = getZoomLevel(data.class);
+				item.cardData.zoom = Math.max(getZoomLevel(data.class),  getZoomLevel(data.type));
 			} else {
 				throw new Error('response not ok');
 			}
@@ -43,34 +43,38 @@
 </script>
 
 <Modal open={true} closeButton={false}>
-	<Subheading>Enter a city and country</Subheading>
-	<Input bind:value={search} />
+	<form
+		onsubmit={async () => {
+			if (await fetchLocation()) oncreate();
+		}}
+		class="flex flex-col gap-2"
+	>
+		<Subheading>Enter a address or city</Subheading>
+		<Input bind:value={search} class="mt-4" />
 
-	{#if errorMessage}
-		<Alert type="error" title="Failed to create map card"><span>{errorMessage}</span></Alert>
-	{/if}
+		{#if errorMessage}
+			<Alert type="error" title="Failed to create map card"><span>{errorMessage}</span></Alert>
+		{/if}
 
-	<p class="text-xs">
-		Geocoding by <a
-			href="https://nominatim.openstreetmap.org/"
-			class="text-accent-800 dark:text-accent-300"
-			target="_blank">Nominatim</a
-		>
-		/ ©
-		<a
-			href="https://www.openstreetmap.org/copyright"
-			class="text-accent-800 dark:text-accent-300"
-			target="_blank">OpenStreetMap contributors</a
-		>
-	</p>
+		<p class="text-xs mt-2">
+			Geocoding by <a
+				href="https://nominatim.openstreetmap.org/"
+				class="text-accent-800 dark:text-accent-300"
+				target="_blank">Nominatim</a
+			>
+			/ ©
+			<a
+				href="https://www.openstreetmap.org/copyright"
+				class="text-accent-800 dark:text-accent-300"
+				target="_blank">OpenStreetMap contributors</a
+			>
+		</p>
 
-	<div class="mt-4 flex justify-end gap-2">
-		<Button onclick={oncancel} variant="ghost">Cancel</Button>
-		<Button
-			disabled={isFetchingLocation}
-			onclick={async () => {
-				if (await fetchLocation()) oncreate();
-			}}>{isFetchingLocation ? 'Creating...' : 'Create'}</Button
-		>
-	</div>
+		<div class="mt-4 flex justify-end gap-2">
+			<Button onclick={oncancel} variant="ghost">Cancel</Button>
+			<Button type="submit" disabled={isFetchingLocation}
+				>{isFetchingLocation ? 'Creating...' : 'Create'}</Button
+			>
+		</div>
+	</form>
 </Modal>

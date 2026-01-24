@@ -22,7 +22,9 @@
 	});
 
 	onMount(() => {
-		if (!mapContainer || !env.PUBLIC_MAPBOX_TOKEN) return;
+		if (!mapContainer || !env.PUBLIC_MAPBOX_TOKEN) {
+			console.log('no map container or no mapbox token');
+		}
 
 		try {
 			mapboxgl.accessToken = env.PUBLIC_MAPBOX_TOKEN;
