@@ -8,7 +8,7 @@
 	import { getDescription, getName } from '$lib/helper';
 	import { page } from '$app/state';
 	import type { ActorIdentifier } from '@atcute/lexicons';
-	import QRCodeModal from '$lib/components/qr/QRCodeModal.svelte';
+	import { qrOverlay } from '$lib/components/qr/qrOverlay.svelte';
 
 	let {
 		data,
@@ -22,28 +22,7 @@
 	renderer.link = ({ href, title, text }) =>
 		`<a target="_blank" href="${href}" title="${title}">${text}</a>`;
 
-	let qrOpen = $state(false);
-	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
-
-	const profileUrl = $derived(`${page.url}/${data.handle}`);
-
-	function startLongPress() {
-		longPressTimer = setTimeout(() => {
-			qrOpen = true;
-		}, 500);
-	}
-
-	function cancelLongPress() {
-		if (longPressTimer) {
-			clearTimeout(longPressTimer);
-			longPressTimer = null;
-		}
-	}
-
-	function handleContextMenu(e: MouseEvent) {
-		e.preventDefault();
-		qrOpen = true;
-	}
+	const profileUrl = $derived(`${page.url.origin}/${data.handle}`);
 </script>
 
 <!-- lg:fixed lg:h-screen lg:w-1/4 lg:max-w-none lg:px-12 lg:pt-24 xl:w-1/3 -->
@@ -51,14 +30,15 @@
 	class="mx-auto flex max-w-lg flex-col justify-between px-8 @5xl/wrapper:fixed @5xl/wrapper:h-screen @5xl/wrapper:w-1/4 @5xl/wrapper:max-w-none @5xl/wrapper:px-12"
 >
 	<div class="flex flex-col gap-4 pt-16 pb-8 @5xl/wrapper:h-screen @5xl/wrapper:pt-24">
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="w-fit cursor-pointer"
-			onpointerdown={startLongPress}
-			onpointerup={cancelLongPress}
-			onpointercancel={cancelLongPress}
-			onpointerleave={cancelLongPress}
-			oncontextmenu={handleContextMenu}
+		<a
+			href={profileUrl}
+			class="w-fit"
+			use:qrOverlay={{
+				context: {
+					title: getName(data),
+					avatar: data.profile.avatar
+				}
+			}}
 		>
 			{#if data.profile.avatar}
 				<img
@@ -69,15 +49,7 @@
 			{:else}
 				<div class="bg-base-300 dark:bg-base-700 size-32 rounded-full @5xl/wrapper:size-44"></div>
 			{/if}
-		</div>
-		<QRCodeModal
-			bind:open={qrOpen}
-			href={profileUrl}
-			context={{
-				title: getName(data),
-				avatar: data.profile.avatar
-			}}
-		/>
+		</a>
 
 		<div class="text-4xl font-bold wrap-anywhere">
 			{getName(data)}

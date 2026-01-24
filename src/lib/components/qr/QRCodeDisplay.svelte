@@ -1,51 +1,37 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
-	let { url, size = 280, logo }: { url: string; size?: number; logo?: string } = $props();
+	let { url, size = 280 }: { url: string; size?: number } = $props();
 
 	let container: HTMLDivElement | undefined = $state();
 
-	$effect(() => {
-		if (!browser || !container) return;
+	onMount(async () => {
+		if (!container) return;
 
-		const render = async () => {
-			const QRCodeStylingModule = await import('qr-code-styling');
-			const QRCodeStyling = QRCodeStylingModule.default;
+		const module = await import('qr-code-styling');
+		const QRCodeStyling = module.default;
 
-			container!.innerHTML = '';
-
-			const options: ConstructorParameters<typeof QRCodeStyling>[0] = {
-				width: size,
-				height: size,
-				data: url,
-				dotsOptions: {
-					color: '#000',
-					type: 'rounded'
-				},
-				backgroundOptions: {
-					color: '#fff'
-				},
-				cornersSquareOptions: {
-					type: 'extra-rounded'
-				},
-				cornersDotOptions: {
-					type: 'dot'
-				}
-			};
-
-			if (logo) {
-				options.image = logo;
-				options.imageOptions = {
-					crossOrigin: 'anonymous',
-					margin: 4
-				};
+		const options: ConstructorParameters<typeof QRCodeStyling>[0] = {
+			width: size,
+			height: size,
+			data: url,
+			dotsOptions: {
+				color: '#000',
+				type: 'rounded'
+			},
+			backgroundOptions: {
+				color: '#fff'
+			},
+			cornersSquareOptions: {
+				type: 'extra-rounded'
+			},
+			cornersDotOptions: {
+				type: 'dot'
 			}
-
-			const qrCode = new QRCodeStyling(options);
-			qrCode.append(container!);
 		};
 
-		render();
+		const qrCode = new QRCodeStyling(options);
+		qrCode.append(container);
 	});
 </script>
 

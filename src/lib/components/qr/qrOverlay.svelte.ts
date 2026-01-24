@@ -12,19 +12,23 @@ export function unregisterQRModal() {
 }
 
 export function qrOverlay(
-	node: HTMLAnchorElement,
-	params: { context?: QRContext; disabled?: boolean } = {}
+	node: HTMLElement,
+	params: { href?: string; context?: QRContext; disabled?: boolean } = {}
 ) {
 	const LONG_PRESS_DURATION = 500;
 	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 	let isLongPress = false;
+
+	function getHref() {
+		return params.href || (node as HTMLAnchorElement).href || '';
+	}
 
 	function startLongPress() {
 		if (params.disabled) return;
 		isLongPress = false;
 		longPressTimer = setTimeout(() => {
 			isLongPress = true;
-			openModal?.(node.href, params.context ?? {});
+			openModal?.(getHref(), params.context ?? {});
 		}, LONG_PRESS_DURATION);
 	}
 
@@ -45,7 +49,7 @@ export function qrOverlay(
 	function handleContextMenu(e: MouseEvent) {
 		if (params.disabled) return;
 		e.preventDefault();
-		openModal?.(node.href, params.context ?? {});
+		openModal?.(getHref(), params.context ?? {});
 	}
 
 	node.addEventListener('pointerdown', startLongPress);
@@ -56,7 +60,7 @@ export function qrOverlay(
 	node.addEventListener('contextmenu', handleContextMenu);
 
 	return {
-		update(newParams: { context?: QRContext; disabled?: boolean }) {
+		update(newParams: { href?: string; context?: QRContext; disabled?: boolean }) {
 			params = newParams;
 		},
 		destroy() {

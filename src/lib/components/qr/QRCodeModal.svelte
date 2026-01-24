@@ -28,8 +28,6 @@
 			toast.error('Failed to copy');
 		}
 	}
-
-	const logoUrl = $derived(context.avatar || context.favicon);
 </script>
 
 <Modal bind:open closeButton={true} class="max-w-sm">
@@ -54,7 +52,7 @@
 		{/if}
 
 		<div class="overflow-hidden rounded-2xl">
-			<QRCodeDisplay url={href} size={280} logo={logoUrl} />
+			<QRCodeDisplay url={href} size={280} />
 		</div>
 
 		<div class="flex w-full items-center gap-2">
