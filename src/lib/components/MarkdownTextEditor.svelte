@@ -104,7 +104,8 @@
 
 			editorProps: {
 				attributes: {
-					class: 'outline-none w-full text-base-600 dark:text-base-400 prose dark:prose-invert prose-a:text-accent-500 prose-a:no-underline'
+					class:
+						'outline-none w-full text-base-600 dark:text-base-400 prose dark:prose-invert prose-a:text-accent-500 prose-a:no-underline'
 				},
 				handleDOMEvents: { drop: () => false }
 			}
@@ -118,7 +119,7 @@
 	});
 </script>
 
-<div class={["w-full cursor-text", className]} bind:this={element}></div>
+<div class={['w-full cursor-text', className]} bind:this={element}></div>
 
 <style>
 	:global(.tiptap p.is-editor-empty:first-child::before) {

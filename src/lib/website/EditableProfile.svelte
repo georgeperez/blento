@@ -132,15 +132,13 @@
 		<!-- Editable Description -->
 		<div class="scrollbar -mx-4 grow overflow-x-hidden overflow-y-scroll px-4">
 			{#if data.publication}
-				
-				
-					<MarkdownTextEditor
-						bind:editor={descriptionEditor}
-						bind:contentDict={data.publication}
-						key="description"
-						placeholder="Add a description... (supports markdown)"
-						class=""
-					/>
+				<MarkdownTextEditor
+					bind:editor={descriptionEditor}
+					bind:contentDict={data.publication}
+					key="description"
+					placeholder="Add a description... (supports markdown)"
+					class=""
+				/>
 			{/if}
 		</div>
 
