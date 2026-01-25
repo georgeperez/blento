@@ -26,6 +26,7 @@ import { PhotoGalleryCardDefinition } from './PhotoGalleryCard';
 import { StandardSiteDocumentListCardDefinition } from './StandardSiteDocumentListCard';
 import { StatusphereCardDefinition } from './StatusphereCard';
 import { EventCardDefinition } from './EventCard';
+import { VCardCardDefinition } from './VCardCard';
 
 export const AllCardDefinitions = [
 	ImageCardDefinition,
@@ -54,7 +55,8 @@ export const AllCardDefinitions = [
 	PhotoGalleryCardDefinition,
 	StandardSiteDocumentListCardDefinition,
 	StatusphereCardDefinition,
-	EventCardDefinition
+	EventCardDefinition,
+	VCardCardDefinition
 ] as const;
 
 export const CardDefinitionsByType = AllCardDefinitions.reduce(
