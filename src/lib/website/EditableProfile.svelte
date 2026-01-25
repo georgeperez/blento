@@ -5,6 +5,8 @@
 	import MarkdownTextEditor from '$lib/components/MarkdownTextEditor.svelte';
 	import { Button } from '@foxui/core';
 	import { getIsMobile } from './context';
+	import type { Editor } from '@tiptap/core';
+	import MadeWithBlento from './MadeWithBlento.svelte';
 
 	let { data = $bindable() }: { data: WebsiteData } = $props();
 
@@ -169,13 +171,6 @@
 
 		<div class={['h-10.5 w-1', profilePosition === 'side' && '@5xl/wrapper:hidden']}></div>
 
-		<div class={['hidden text-xs font-light', profilePosition === 'side' && '@5xl/wrapper:block']}>
-			made with <a
-				href="https://blento.app"
-				target="_blank"
-				class="hover:text-accent-600 dark:hover:text-accent-400 font-medium transition-colors duration-200"
-				>blento</a
-			>
-		</div>
+		<MadeWithBlento class="hidden @5xl/wrapper:block {profilePosition === 'side' && '@5xl/wrapper:block'}" />
 	</div>
 </div>

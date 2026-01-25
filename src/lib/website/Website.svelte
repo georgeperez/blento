@@ -13,9 +13,11 @@
 	import BaseCard from '../cards/BaseCard/BaseCard.svelte';
 	import type { WebsiteData } from '$lib/types';
 	import Context from './Context.svelte';
+	import MadeWithBlento from './MadeWithBlento.svelte';
 	import Head from './Head.svelte';
 	import type { Did, Handle } from '@atcute/lexicons';
 	import QRModalProvider from '$lib/components/qr/QRModalProvider.svelte';
+	import EmptyState from './EmptyState.svelte';
 
 	let { data }: { data: WebsiteData } = $props();
 
@@ -61,22 +63,19 @@
 		>
 			<div></div>
 			<div bind:this={container} class="@container/grid relative col-span-3 px-2 py-8 lg:px-8">
-				{#each data.cards.toSorted(sortItems) as item (item.id)}
-					<BaseCard {item}>
-						<Card {item} />
-					</BaseCard>
-				{/each}
-				<div style="height: {(maxHeight / 8) * 100}cqw;"></div>
+				{#if data.cards.length === 0}
+					<EmptyState {data} />
+				{:else}
+					{#each data.cards.toSorted(sortItems) as item (item.id)}
+						<BaseCard {item}>
+							<Card {item} />
+						</BaseCard>
+					{/each}
+					<div style="height: {(maxHeight / 8) * 100}cqw;"></div>
+				{/if}
 			</div>
 		</div>
 
-		<div class="mx-auto block pb-8 text-center text-xs font-light @5xl/wrapper:hidden">
-			made with <a
-				href="https://blento.app"
-				target="_blank"
-				class="hover:text-accent-600 dark:hover:text-accent-400 font-medium transition-colors duration-200"
-				>blento</a
-			>
-		</div>
+		<MadeWithBlento class="mx-auto block pb-8 text-center @5xl/wrapper:hidden" />
 	</div>
 </Context>

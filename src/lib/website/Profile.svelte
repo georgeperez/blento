@@ -9,6 +9,7 @@
 	import { page } from '$app/state';
 	import type { ActorIdentifier } from '@atcute/lexicons';
 	import { qrOverlay } from '$lib/components/qr/qrOverlay.svelte';
+	import MadeWithBlento from './MadeWithBlento.svelte';
 
 	let {
 		data,
@@ -142,13 +143,6 @@
 				</div>
 			{/if}
 		{/if}
-		<div class={['hidden text-xs font-light', profilePosition === 'side' && '@5xl/wrapper:block']}>
-			made with <a
-				href="https://blento.app"
-				target="_blank"
-				class="hover:text-accent-600 dark:hover:text-accent-400 font-medium transition-colors duration-200"
-				>blento</a
-			>
-		</div>
+		<MadeWithBlento class="hidden {profilePosition === 'side' && '@5xl/wrapper:block'}" />
 	</div>
 </div>
