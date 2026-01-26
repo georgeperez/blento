@@ -152,13 +152,13 @@
 			{@const pathData = getSvgPathFromStroke(
 				getStroke(stroke.points, getStrokeOptions(stroke.size ?? 3))
 			)}
-			<path d={pathData} class="fill-black accent:fill-white dark:fill-white" />
+			<path d={pathData} class="accent:fill-white fill-black dark:fill-white" />
 		{/each}
 		{#if currentStroke.length > 0}
 			{@const pathData = getSvgPathFromStroke(
 				getStroke(currentStroke, getStrokeOptions(strokeSizes[strokeWidth]))
 			)}
-			<path d={pathData} class="fill-black accent:fill-white dark:fill-white" />
+			<path d={pathData} class="accent:fill-white fill-black dark:fill-white" />
 		{/if}
 	</svg>
 

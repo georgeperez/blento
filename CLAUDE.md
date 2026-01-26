@@ -64,6 +64,7 @@ Grid margins: 16px desktop, 12px mobile.
 - `auth.svelte.ts` - OAuth client state and login/logout flow using `@atcute/oauth-browser-client`
 - `atproto.ts` - ATProto API helpers: `resolveHandle`, `listRecords`, `getRecord`, `putRecord`, `deleteRecord`, `uploadImage`
 - Data is stored in user's PDS under collection `app.blento.card`
+- **Important**: ATProto does not allow floating point numbers in records. All numeric values must be integers.
 
 **Data Loading (`src/lib/website/`):**
 
