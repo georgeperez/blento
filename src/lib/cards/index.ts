@@ -27,6 +27,7 @@ import { StandardSiteDocumentListCardDefinition } from './StandardSiteDocumentLi
 import { StatusphereCardDefinition } from './StatusphereCard';
 import { EventCardDefinition } from './EventCard';
 import { VCardCardDefinition } from './VCardCard';
+import { DrawCardDefinition } from './DrawCard';
 
 export const AllCardDefinitions = [
 	ImageCardDefinition,
@@ -56,7 +57,8 @@ export const AllCardDefinitions = [
 	StandardSiteDocumentListCardDefinition,
 	StatusphereCardDefinition,
 	EventCardDefinition,
-	VCardCardDefinition
+	VCardCardDefinition,
+	DrawCardDefinition
 ] as const;
 
 export const CardDefinitionsByType = AllCardDefinitions.reduce(

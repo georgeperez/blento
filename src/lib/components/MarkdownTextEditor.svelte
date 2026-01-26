@@ -108,8 +108,7 @@
 
 			editorProps: {
 				attributes: {
-					class:
-						'outline-none w-full text-base-600 dark:text-base-400 prose dark:prose-invert prose-a:text-accent-500 prose-a:no-underline'
+					class: 'outline-none w-full'
 				},
 				handleDOMEvents: { drop: () => false }
 			}

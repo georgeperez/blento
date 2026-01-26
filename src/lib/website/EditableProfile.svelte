@@ -102,7 +102,7 @@
 		>
 			{#if getAvatarUrl()}
 				<img
-					class="border-base-400 shrink-0 dark:border-base-800 size-full rounded-full border object-cover"
+					class="border-base-400 dark:border-base-800 size-full shrink-0 rounded-full border object-cover"
 					src={getAvatarUrl()}
 					alt=""
 				/>
@@ -164,7 +164,7 @@
 					bind:contentDict={data.publication}
 					key="description"
 					placeholder="Something about me..."
-					class=""
+					class="text-base-600 dark:text-base-400 prose dark:prose-invert prose-a:text-accent-500 prose-a:no-underline"
 				/>
 			{/if}
 		</div>

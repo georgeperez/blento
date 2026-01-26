@@ -421,27 +421,28 @@ export async function savePage(
 ) {
 	const promises = [];
 	// find all cards that have been updated (where items differ from originalItems)
-	for (let item of currentItems) {
+	for (const item of currentItems) {
 		const originalItem = data.cards.find((i) => cardsEqual(i, item));
 
 		if (!originalItem) {
-			console.log('updated or new item', item);
-			item.updatedAt = new Date().toISOString();
+			let parsedItem = JSON.parse(JSON.stringify(item));
+			console.log('updated or new item', parsedItem);
+			parsedItem.updatedAt = new Date().toISOString();
 			// run optional upload function for this card type
-			const cardDef = CardDefinitionsByType[item.cardType];
+			const cardDef = CardDefinitionsByType[parsedItem.cardType];
 
 			if (cardDef?.upload) {
-				item = await cardDef?.upload(item);
+				parsedItem = await cardDef?.upload(parsedItem);
 			}
 
-			item.page = data.page;
-			item.version = 2;
+			parsedItem.page = data.page;
+			parsedItem.version = 2;
 
 			promises.push(
 				putRecord({
 					collection: 'app.blento.card',
-					rkey: item.id,
-					record: item
+					rkey: parsedItem.id,
+					record: parsedItem
 				})
 			);
 		}

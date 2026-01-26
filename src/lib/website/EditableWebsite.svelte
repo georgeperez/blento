@@ -142,7 +142,8 @@
 			await savePage(data, items, publication);
 
 			publication = JSON.stringify(data.publication);
-		} catch {
+		} catch (error) {
+			console.log(error);
 			toast.error('Error saving page!');
 		} finally {
 			isSaving = false;
@@ -755,19 +756,17 @@
 		</div>
 	</Sidebar>
 
-	{#if user.isLoggedIn}
-		<EditBar
-			{data}
-			bind:linkValue
-			bind:isSaving
-			bind:showingMobileView
-			{newCard}
-			{addLink}
-			{save}
-			{handleImageInputChange}
-			{handleVideoInputChange}
-		/>
-	{/if}
+	<EditBar
+		{data}
+		bind:linkValue
+		bind:isSaving
+		bind:showingMobileView
+		{newCard}
+		{addLink}
+		{save}
+		{handleImageInputChange}
+		{handleVideoInputChange}
+	/>
 
 	<Toaster />
 </Context>

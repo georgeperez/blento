@@ -1,20 +1,15 @@
 # Todo for beta version
 
-- fix opengraph image stuff (caching issue?)
-
 - site.standard
-  - move subpages to own lexicon (app.blento.page)
   - move description to markdownDescription and set description as text only
+
+- big button card
 
 - card with big call to action button
 
-- link card: save favicon and og image as blobs
+- link card allow changing favicon, og image (+ hide favicon)
 
 - video card?
-
-- allow changing profile picture
-
-- allow editing profile stuff inline (in sidebar profile)
 
 - allow setting base and accent color
 
@@ -23,8 +18,6 @@
 - share button (copy share link to blento, maybe post to bluesky?)
 
 - add icons to "change card to..." popover
-
-- show social icon instead of favicon in link card if platform found for link
 
 - when adding images try to add them in a size that best fits aspect ratio
 

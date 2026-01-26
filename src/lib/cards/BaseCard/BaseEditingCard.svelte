@@ -173,10 +173,13 @@
 	isEditing={true}
 	bind:ref
 	showOutline={isResizing}
+	locked={item.cardData?.locked}
 	class="scale-100 opacity-100 starting:scale-0 starting:opacity-0"
 	{...rest}
 >
-	<div class="absolute inset-0 cursor-grab"></div>
+	{#if !item.cardData?.locked}
+		<div class="absolute inset-0 cursor-grab"></div>
+	{/if}
 	{@render children?.()}
 
 	{#if cardDef.canHaveLabel}

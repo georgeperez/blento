@@ -17,6 +17,7 @@
 		controls?: Snippet<[]>;
 		isEditing?: boolean;
 		showOutline?: boolean;
+		locked?: boolean;
 	} & WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
 	let {
@@ -26,6 +27,7 @@
 		isEditing = false,
 		controls,
 		showOutline,
+		locked = false,
 		class: className,
 		...rest
 	}: BaseCardProps = $props();
@@ -37,7 +39,7 @@
 	id={item.id}
 	data-flip-id={item.id}
 	bind:this={ref}
-	draggable={isEditing}
+	draggable={isEditing && !locked}
 	class={[
 		'card group/card selection:bg-accent-600/50 focus-within:outline-accent-500 @container/card absolute isolate z-0 rounded-3xl outline-offset-2 transition-all duration-200 focus-within:outline-2',
 		color ? (colors[color] ?? colors.accent) : colors.base,
