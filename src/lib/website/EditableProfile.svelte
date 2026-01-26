@@ -62,9 +62,14 @@
 			: '@5xl/wrapper:max-w-4xl @5xl/wrapper:px-12'
 	]}
 >
-	<div class={['absolute left-2 z-20 flex gap-2', profilePosition === 'side' ? 'top-12' : 'top-4']}>
+	<div
+		class={[
+			'absolute left-2 z-20 flex gap-2',
+			profilePosition === 'side' ? 'top-2 left-14' : 'top-2'
+		]}
+	>
 		<Button
-			size="sm"
+			size="icon"
 			onclick={() => {
 				data.publication.preferences ??= {};
 				data.publication.preferences.hideProfileSection = true;
@@ -72,13 +77,56 @@
 			}}
 			variant="ghost"
 		>
-			hide profile
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="size-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+				/>
+			</svg>
 		</Button>
 
 		<!-- Position toggle button (desktop only) -->
 		{#if !isMobile()}
-			<Button size="sm" type="button" onclick={toggleProfilePosition} variant="ghost">
-				{profilePosition === 'side' ? 'Move to top' : 'Move to side'}
+			<Button size="icon" type="button" onclick={toggleProfilePosition} variant="ghost">
+				{#if profilePosition === 'side'}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+						/>
+					</svg>
+				{:else}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="m19.5 4.5-15 15m0 0h11.25m-11.25 0V8.25"
+						/>
+					</svg>
+				{/if}
 			</Button>
 		{/if}
 	</div>

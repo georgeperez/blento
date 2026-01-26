@@ -268,6 +268,40 @@ export function setPositionOfNewItem(newItem: Item, items: Item[]) {
 	}
 }
 
+/**
+ * Find a valid position for a new item in a single mode (desktop or mobile).
+ * This modifies the item's position properties in-place.
+ */
+export function findValidPosition(newItem: Item, items: Item[], mobile: boolean) {
+	if (mobile) {
+		let foundPosition = false;
+		newItem.mobileY = 0;
+		while (!foundPosition) {
+			for (newItem.mobileX = 0; newItem.mobileX <= COLUMNS - newItem.mobileW; newItem.mobileX++) {
+				const collision = items.find((item) => overlaps(newItem, item, true));
+				if (!collision) {
+					foundPosition = true;
+					break;
+				}
+			}
+			if (!foundPosition) newItem.mobileY! += 1;
+		}
+	} else {
+		let foundPosition = false;
+		newItem.y = 0;
+		while (!foundPosition) {
+			for (newItem.x = 0; newItem.x <= COLUMNS - newItem.w; newItem.x++) {
+				const collision = items.find((item) => overlaps(newItem, item, false));
+				if (!collision) {
+					foundPosition = true;
+					break;
+				}
+			}
+			if (!foundPosition) newItem.y += 1;
+		}
+	}
+}
+
 export async function refreshData(data: { updatedAt?: number; handle: string }) {
 	const TEN_MINUTES = 10 * 60 * 1000;
 	const now = Date.now();
