@@ -30,6 +30,7 @@ import { EventCardDefinition } from './EventCard';
 import { VCardCardDefinition } from './VCardCard';
 import { DrawCardDefinition } from './DrawCard';
 import { TimerCardDefinition } from './TimerCard';
+import { SpotifyCardDefinition } from './SpotifyCard';
 import { Model3DCardDefinition } from './Model3DCard';
 
 export const AllCardDefinitions = [
@@ -64,6 +65,7 @@ export const AllCardDefinitions = [
 	VCardCardDefinition,
 	DrawCardDefinition,
 	TimerCardDefinition,
+	SpotifyCardDefinition,
 	Model3DCardDefinition
 ] as const;
 

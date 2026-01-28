@@ -9,6 +9,7 @@
 	import { COLUMNS } from '$lib';
 	import { getCanEdit, getIsMobile } from '$lib/website/context';
 	import PlainTextEditor from '$lib/components/PlainTextEditor.svelte';
+	import { fixAllCollisions, fixCollisions } from '$lib/helper';
 
 	let colorsChoices = [
 		{ class: 'text-base-500', label: 'base' },
@@ -55,7 +56,7 @@
 
 	let colorPopoverOpen = $state(false);
 
-	const cardDef = $derived(CardDefinitionsByType[item.cardType]);
+	const cardDef = $derived(CardDefinitionsByType[item.cardType] ?? {});
 
 	const minW = $derived(cardDef.minW ?? (isMobile() ? 2 : 2));
 	const minH = $derived(cardDef.minH ?? (isMobile() ? 2 : 2));
