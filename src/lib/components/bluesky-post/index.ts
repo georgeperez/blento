@@ -26,6 +26,7 @@ export function blueskyPostToPostData(
 	// const reason = data.reason;
 	// const reply = data.reply?.parent;
 	// const replyId = reply?.uri?.split('/').pop();
+	console.log(JSON.parse(JSON.stringify(data)));
 
 	const id = post.uri.split('/').pop();
 
@@ -87,7 +88,8 @@ export function blueskyPostToPostData(
 				} as PostEmbed)
 			: undefined,
 
-		htmlContent: blueskyPostToHTML(post, baseUrl)
+		htmlContent: blueskyPostToHTML(post, baseUrl),
+		labels: post.labels ? post.labels.map((label) => label.val) : undefined
 	};
 }
 
