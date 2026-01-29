@@ -14,7 +14,7 @@
 		class={cn(
 			'text-base-950 dark:text-base-50 line-clamp-1 inline-flex items-center justify-center px-4 text-2xl font-semibold',
 			item.color === 'transparent'
-				? 'bg-accent-500 dark:text-base-950 rounded-2xl px-5 py-2.5 text-xl'
+				? 'bg-accent-400 dark:bg-accent-500 hover:bg-accent-400 dark:text-base-950 rounded-2xl px-5 py-2.5 text-xl transition-colors duration-100'
 				: ''
 		)}
 	>
