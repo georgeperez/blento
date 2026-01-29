@@ -8,6 +8,7 @@
 	import type { Snippet } from 'svelte';
 	import { numberToHumanReadable } from '..';
 	import { RelativeTime } from '@foxui/time';
+	import PostEmbed from './PostEmbed.svelte';
 
 	let {
 		ref = $bindable(),
@@ -181,9 +182,7 @@
 				{/if}
 			</Prose>
 
-			{#if data.embed}
-				<Embed embed={data.embed} />
-			{/if}
+			<PostEmbed {data} />
 
 			{#if showReply || showRepost || showLike || showBookmark || customActions}
 				<div
