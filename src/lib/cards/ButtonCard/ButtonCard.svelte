@@ -13,7 +13,9 @@
 	<span
 		class={cn(
 			'text-base-950 dark:text-base-50 line-clamp-1 inline-flex items-center justify-center px-4 text-2xl font-semibold',
-			item.color === 'transparent' ? 'bg-accent-500 dark:text-base-950 text-xl rounded-2xl px-5 py-2.5' : ''
+			item.color === 'transparent'
+				? 'bg-accent-500 dark:text-base-950 rounded-2xl px-5 py-2.5 text-xl'
+				: ''
 		)}
 	>
 		{item.cardData.text || 'Click me'}
