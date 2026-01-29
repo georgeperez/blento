@@ -31,7 +31,7 @@ import { VCardCardDefinition } from './VCardCard';
 import { DrawCardDefinition } from './DrawCard';
 import { TimerCardDefinition } from './TimerCard';
 import { SpotifyCardDefinition } from './SpotifyCard';
-import { Model3DCardDefinition } from './Model3DCard';
+// import { Model3DCardDefinition } from './Model3DCard';
 
 export const AllCardDefinitions = [
 	ImageCardDefinition,
@@ -65,8 +65,8 @@ export const AllCardDefinitions = [
 	VCardCardDefinition,
 	DrawCardDefinition,
 	TimerCardDefinition,
-	SpotifyCardDefinition,
-	Model3DCardDefinition
+	SpotifyCardDefinition
+	// Model3DCardDefinition
 ] as const;
 
 export const CardDefinitionsByType = AllCardDefinitions.reduce(

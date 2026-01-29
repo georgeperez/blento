@@ -11,17 +11,20 @@
 
 - show nsfw warnings
 
-- big button card
-
-- card with big call to action button
-
-- video card?
-
-- allow setting base and accent color
+- card with big call to action button "create your blento"
 
 - ask to fill with some default cards on page creation
 
 - when adding images try to add them in a size that best fits aspect ratio
+
+- onboarding?
+
+- switch sidebar to a quick list of available cards with search function
+
+- test
+  - selfhosting
+
+- guestbook card
 
 - onboarding?
 
