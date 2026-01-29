@@ -26,4 +26,17 @@
 
 - guestbook card
 
+- onboarding?
+
+- switch sidebar to a quick list of available cards with search function
+
+- test
+  - selfhosting
+
+- guestbook card
+
 - analytics?
+
+- refresh recently updated blentos (move to top of list, update profiles every 24 hours)
+
+- server side oauth?
