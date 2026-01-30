@@ -7,3 +7,6 @@ export const [getIsMobile, setIsMobile] = createContext<() => boolean>();
 export const [getCanEdit, setCanEdit] = createContext<() => boolean>();
 export const [getAdditionalUserData, setAdditionalUserData] =
 	createContext<Record<string, unknown>>();
+export const [getIsCoarse, setIsCoarse] = createContext<() => boolean>();
+export const [getSelectedCardId, setSelectedCardId] = createContext<() => string | null>();
+export const [getSelectCard, setSelectCard] = createContext<(id: string | null) => void>();

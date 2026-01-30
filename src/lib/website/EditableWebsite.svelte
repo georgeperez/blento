@@ -26,7 +26,7 @@
 	import { tick, type Component } from 'svelte';
 	import type { CreationModalComponentProps } from '../cards/types';
 	import { dev } from '$app/environment';
-	import { setIsMobile } from './context';
+	import { setIsCoarse, setIsMobile, setSelectedCardId, setSelectCard } from './context';
 	import BaseEditingCard from '../cards/BaseCard/BaseEditingCard.svelte';
 	import Context from './Context.svelte';
 	import Head from './Head.svelte';
@@ -124,6 +124,19 @@
 
 	setIsMobile(() => isMobile);
 
+	const isCoarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+	setIsCoarse(() => isCoarse);
+
+	let selectedCardId: string | null = $state(null);
+	let selectedCard = $derived(
+		selectedCardId ? (items.find((i) => i.id === selectedCardId) ?? null) : null
+	);
+
+	setSelectedCardId(() => selectedCardId);
+	setSelectCard((id: string | null) => {
+		selectedCardId = id;
+	});
+
 	const getY = (item: Item) => (isMobile ? (item.mobileY ?? item.y) : item.y);
 	const getH = (item: Item) => (isMobile ? (item.mobileH ?? item.h) : item.h);
 
@@ -140,6 +153,8 @@
 	}
 
 	function newCard(type: string = 'link', cardData?: any) {
+		selectedCardId = null;
+
 		// close sidebar if open
 		const popover = document.getElementById('mobile-menu');
 		if (popover) {
@@ -229,18 +244,17 @@
 
 	let debugPoint = $state({ x: 0, y: 0 });
 
-	function getDragXY(
-		e: DragEvent & {
-			currentTarget: EventTarget & HTMLDivElement;
-		}
+	function getGridPosition(
+		clientX: number,
+		clientY: number
 	):
 		| { x: number; y: number; swapWithId: string | null; placement: 'above' | 'below' | null }
 		| undefined {
 		if (!container || !activeDragElement.item) return;
 
 		// x, y represent the top-left corner of the dragged card
-		const x = e.clientX + activeDragElement.mouseDeltaX;
-		const y = e.clientY + activeDragElement.mouseDeltaY;
+		const x = clientX + activeDragElement.mouseDeltaX;
+		const y = clientY + activeDragElement.mouseDeltaY;
 
 		const rect = container.getBoundingClientRect();
 		const currentMargin = isMobile ? mobileMargin : margin;
@@ -361,6 +375,149 @@
 
 		return { x: gridX, y: gridY, swapWithId, placement };
 	}
+
+	function getDragXY(
+		e: DragEvent & {
+			currentTarget: EventTarget & HTMLDivElement;
+		}
+	) {
+		return getGridPosition(e.clientX, e.clientY);
+	}
+
+	// Touch drag system (instant drag on selected card)
+	let touchDragActive = $state(false);
+
+	function touchStart(e: TouchEvent) {
+		if (!selectedCardId || !container) return;
+		const touch = e.touches[0];
+		if (!touch) return;
+
+		// Check if the touch is on the selected card element
+		const target = (e.target as HTMLElement)?.closest?.('.card');
+		if (!target || target.id !== selectedCardId) return;
+
+		const item = items.find((i) => i.id === selectedCardId);
+		if (!item || item.cardData?.locked) return;
+
+		// Start dragging immediately
+		touchDragActive = true;
+
+		const cardEl = container.querySelector(`#${CSS.escape(selectedCardId)}`) as HTMLDivElement;
+		if (!cardEl) return;
+
+		activeDragElement.element = cardEl;
+		activeDragElement.w = item.w;
+		activeDragElement.h = item.h;
+		activeDragElement.item = item;
+
+		// Store original positions of all items
+		activeDragElement.originalPositions = new Map();
+		for (const it of items) {
+			activeDragElement.originalPositions.set(it.id, {
+				x: it.x,
+				y: it.y,
+				mobileX: it.mobileX,
+				mobileY: it.mobileY
+			});
+		}
+
+		const rect = cardEl.getBoundingClientRect();
+		activeDragElement.mouseDeltaX = rect.left - touch.clientX;
+		activeDragElement.mouseDeltaY = rect.top - touch.clientY;
+	}
+
+	function touchMove(e: TouchEvent) {
+		if (!touchDragActive) return;
+
+		const touch = e.touches[0];
+		if (!touch) return;
+
+		e.preventDefault();
+
+		const result = getGridPosition(touch.clientX, touch.clientY);
+		if (!result || !activeDragElement.item) return;
+
+		const draggedOrigPos = activeDragElement.originalPositions.get(activeDragElement.item.id);
+
+		// Reset all items to original positions first
+		for (const it of items) {
+			const origPos = activeDragElement.originalPositions.get(it.id);
+			if (origPos && it !== activeDragElement.item) {
+				if (isMobile) {
+					it.mobileX = origPos.mobileX;
+					it.mobileY = origPos.mobileY;
+				} else {
+					it.x = origPos.x;
+					it.y = origPos.y;
+				}
+			}
+		}
+
+		// Update dragged item position
+		if (isMobile) {
+			activeDragElement.item.mobileX = result.x;
+			activeDragElement.item.mobileY = result.y;
+		} else {
+			activeDragElement.item.x = result.x;
+			activeDragElement.item.y = result.y;
+		}
+
+		// Handle horizontal swap
+		if (result.swapWithId && draggedOrigPos) {
+			const swapTarget = items.find((it) => it.id === result.swapWithId);
+			if (swapTarget) {
+				if (isMobile) {
+					swapTarget.mobileX = draggedOrigPos.mobileX;
+					swapTarget.mobileY = draggedOrigPos.mobileY;
+				} else {
+					swapTarget.x = draggedOrigPos.x;
+					swapTarget.y = draggedOrigPos.y;
+				}
+			}
+		}
+
+		fixCollisions(items, activeDragElement.item, isMobile);
+
+		// Auto-scroll near edges
+		const scrollZone = 100;
+		const scrollSpeed = 10;
+		const viewportHeight = window.innerHeight;
+
+		if (touch.clientY < scrollZone) {
+			const intensity = 1 - touch.clientY / scrollZone;
+			window.scrollBy(0, -scrollSpeed * intensity);
+		} else if (touch.clientY > viewportHeight - scrollZone) {
+			const intensity = 1 - (viewportHeight - touch.clientY) / scrollZone;
+			window.scrollBy(0, scrollSpeed * intensity);
+		}
+	}
+
+	function touchEnd() {
+		if (touchDragActive && activeDragElement.item) {
+			// Finalize position
+			fixCollisions(items, activeDragElement.item, isMobile);
+
+			activeDragElement.x = -1;
+			activeDragElement.y = -1;
+			activeDragElement.element = null;
+			activeDragElement.item = null;
+			activeDragElement.lastTargetId = null;
+			activeDragElement.lastPlacement = null;
+		}
+
+		touchDragActive = false;
+	}
+
+	// Only register non-passive touchmove when actively dragging
+	$effect(() => {
+		const el = container;
+		if (!touchDragActive || !el) return;
+
+		el.addEventListener('touchmove', touchMove, { passive: false });
+		return () => {
+			el.removeEventListener('touchmove', touchMove);
+		};
+	});
 
 	let linkValue = $state('');
 
@@ -676,14 +833,6 @@
 <Account {data} />
 
 <Context {data}>
-	{#if !dev}
-		<div
-			class="bg-base-200 dark:bg-base-800 fixed inset-0 z-50 inline-flex h-full w-full items-center justify-center p-4 text-center lg:hidden"
-		>
-			Editing on mobile is not supported yet. Please use a desktop browser.
-		</div>
-	{/if}
-
 	<Controls bind:data />
 
 	{#if showingMobileView}
@@ -732,9 +881,17 @@
 			]}
 		>
 			<div class="pointer-events-none"></div>
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 			<div
 				bind:this={container}
+				onclick={(e) => {
+					// Deselect when tapping empty grid space
+					if (e.target === e.currentTarget || !(e.target as HTMLElement)?.closest?.('.card')) {
+						selectedCardId = null;
+					}
+				}}
+				ontouchstart={touchStart}
+				ontouchend={touchEnd}
 				ondragover={(e) => {
 					e.preventDefault();
 
@@ -911,6 +1068,32 @@
 		{save}
 		{handleImageInputChange}
 		{handleVideoInputChange}
+		{selectedCard}
+		{isMobile}
+		{isCoarse}
+		ondeselect={() => {
+			selectedCardId = null;
+		}}
+		ondelete={() => {
+			if (selectedCard) {
+				items = items.filter((it) => it.id !== selectedCardId);
+				compactItems(items, false);
+				compactItems(items, true);
+				selectedCardId = null;
+			}
+		}}
+		onsetsize={(w: number, h: number) => {
+			if (selectedCard) {
+				if (isMobile) {
+					selectedCard.mobileW = w;
+					selectedCard.mobileH = h;
+				} else {
+					selectedCard.w = w;
+					selectedCard.h = h;
+				}
+				fixCollisions(items, selectedCard, isMobile);
+			}
+		}}
 	/>
 
 	<Toaster />
