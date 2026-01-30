@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Embed from './embeds/Embed.svelte';
+	import DOMPurify from 'isomorphic-dompurify';
 	import { cn, Prose } from '@foxui/core';
 	import type { WithChildren, WithElementRef } from 'bits-ui';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -176,7 +177,7 @@
 				class="accent:prose-a:text-accent-950 accent:text-base-900 accent:prose-p:text-base-900 accent:prose-a:underline"
 			>
 				{#if data.htmlContent}
-					{@html data.htmlContent}
+					{@html DOMPurify.sanitize(data.htmlContent, { ADD_ATTR: ['target'] })}
 				{:else}
 					{@render children?.()}
 				{/if}

@@ -23,7 +23,8 @@
 			"Bash(lsof:*)",
 			"Bash(pnpm dev)",
 			"Bash(pnpm exec svelte-kit:*)",
-			"Bash(pnpm build:*)"
+			"Bash(pnpm build:*)",
+			"Bash(pnpm remove:*)"
 		]
 	}
 }
