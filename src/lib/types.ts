@@ -55,6 +55,9 @@ export type WebsiteData = {
 			// theme colors
 			accentColor?: string;
 			baseColor?: string;
+
+			// layout mirroring: 0/undefined=never edited, 1=desktop only, 2=mobile only, 3=both
+			editedOn?: number;
 		};
 	};
 	profile: AppBskyActorDefs.ProfileViewDetailed;

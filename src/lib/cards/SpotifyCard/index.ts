@@ -40,7 +40,9 @@ export const SpotifyCardDefinition = {
 	name: 'Spotify Embed',
 	canResize: true,
 	minW: 4,
-	minH: 5
+	minH: 5,
+
+	groups: ['Media']
 } as CardDefinition & { type: typeof cardType };
 
 // Match Spotify album and playlist URLs

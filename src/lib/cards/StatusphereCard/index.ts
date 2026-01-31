@@ -47,7 +47,10 @@ export const StatusphereCardDefinition = {
 			item.cardData.label = item.cardData.title;
 		}
 	},
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	name: 'Emoji',
+	groups: ['Media']
 } as CardDefinition & { type: 'statusphere' };
 
 export function emojiToNotoAnimatedWebp(emoji: string | undefined): string | undefined {

@@ -122,5 +122,6 @@ export const VCardCardDefinition = {
 
 	sidebarButtonText: 'vCard',
 	allowSetColor: true,
-	name: 'vCard Card'
+	name: 'vCard Card',
+	groups: ['Social']
 } as CardDefinition & { type: 'vcard' };

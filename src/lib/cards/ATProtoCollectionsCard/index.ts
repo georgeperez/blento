@@ -19,5 +19,9 @@ export const ATProtoCollectionsCardDefinition = {
 		item.w = 4;
 		item.mobileW = 8;
 	},
-	sidebarButtonText: 'Atmosphere Collections'
+	sidebarButtonText: 'Atmosphere Collections',
+
+	name: 'ATProto Collections',
+
+	groups: ['Social']
 } as CardDefinition & { type: 'atprotocollections' };

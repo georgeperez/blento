@@ -45,5 +45,7 @@ export const GifCardDefinition = {
 		return null;
 	},
 	urlHandlerPriority: 5,
-	name: 'GIF'
+	name: 'GIF',
+
+	groups: ['Media']
 } as CardDefinition & { type: 'gif' };

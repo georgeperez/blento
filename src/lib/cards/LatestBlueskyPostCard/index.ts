@@ -18,5 +18,9 @@ export const LatestBlueskyPostCardDefinition = {
 
 		return JSON.parse(JSON.stringify(authorFeed));
 	},
-	minW: 4
+	minW: 4,
+
+	name: 'Latest Bluesky Post',
+
+	groups: ['Social']
 } as CardDefinition & { type: 'latestPost' };

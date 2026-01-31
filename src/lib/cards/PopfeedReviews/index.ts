@@ -18,5 +18,8 @@ export const PopfeedReviewsCardDefinition = {
 	},
 	minH: 3,
 	sidebarButtonText: 'Popfeed Reviews',
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	groups: ['Media'],
+	name: 'Movie and TV Reviews'
 } as CardDefinition & { type: 'recentPopfeedReviews' };

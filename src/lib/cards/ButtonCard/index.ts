@@ -27,5 +27,8 @@ export const ButtonCardDefinition: CardDefinition = {
 	minW: 2,
 	minH: 1,
 	maxW: 8,
-	maxH: 4
+	maxH: 4,
+
+	groups: ['Utilities'],
+	name: 'Button'
 };

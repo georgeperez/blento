@@ -60,5 +60,6 @@ export const GuestbookCardDefinition = {
 
 		return results;
 	},
-	name: 'Guestbook'
+	name: 'Guestbook',
+	groups: ['Social']
 } as CardDefinition & { type: 'guestbook' };

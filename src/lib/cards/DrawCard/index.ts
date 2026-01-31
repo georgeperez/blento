@@ -23,5 +23,7 @@ export const DrawCardDefinition = {
 			strokeWidth: 1,
 			locked: true
 		};
-	}
+	},
+
+	groups: ['Visual']
 } as CardDefinition & { type: 'draw' };

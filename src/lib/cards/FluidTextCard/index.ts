@@ -23,5 +23,8 @@ export const FluidTextCardDefinition = {
 	sidebarButtonText: 'Fluid Text',
 	defaultColor: 'transparent',
 	allowSetColor: true,
-	minW: 2
+	minW: 2,
+
+	groups: ['Visual'],
+	name: 'Fluid Text'
 } as CardDefinition & { type: 'fluid-text' };

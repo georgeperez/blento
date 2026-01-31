@@ -63,5 +63,7 @@ export const BlueskyPostCardDefinition = {
 		return postsMap;
 	},
 	minW: 4,
-	name: 'Bluesky Post'
+	name: 'Bluesky Post',
+
+	groups: ['Social']
 } as CardDefinition & { type: 'blueskyPost' };

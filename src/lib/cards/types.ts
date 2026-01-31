@@ -73,4 +73,10 @@ export type CardDefinition = {
 	canHaveLabel?: boolean;
 
 	migrate?: (item: Item) => void;
+
+	groups?: string[];
+
+	keywords?: string[];
+
+	icon?: string;
 };

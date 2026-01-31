@@ -33,5 +33,6 @@ export const TimerCardDefinition = {
 	allowSetColor: true,
 	name: 'Timer Card',
 	minW: 4,
-	canHaveLabel: true
+	canHaveLabel: true,
+	groups: ['Utilities']
 } as CardDefinition & { type: 'timer' };

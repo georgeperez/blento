@@ -51,7 +51,9 @@ export const BigSocialCardDefinition = {
 		return item;
 	},
 	urlHandlerPriority: 1,
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	groups: ['Social']
 } as CardDefinition & { type: 'bigsocial' };
 
 import {

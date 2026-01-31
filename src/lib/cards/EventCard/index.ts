@@ -112,5 +112,7 @@ export const EventCardDefinition = {
 
 	urlHandlerPriority: 5,
 
-	name: 'Event Card'
+	name: 'Event',
+
+	groups: ['Social']
 } as CardDefinition & { type: 'event' };

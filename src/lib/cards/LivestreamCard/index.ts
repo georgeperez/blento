@@ -81,7 +81,8 @@ export const LivestreamCardDefitition = {
 
 	urlHandlerPriority: 5,
 
-	name: 'stream.place Card'
+	name: 'Latest Livestream (stream.place)',
+	groups: ['Media']
 } as CardDefinition & { type: 'latestLivestream' };
 
 export const LivestreamEmbedCardDefitition = {

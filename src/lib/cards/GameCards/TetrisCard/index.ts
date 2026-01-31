@@ -19,5 +19,9 @@ export const TetrisCardDefinition = {
 		card.cardData = {};
 	},
 	maxH: 10,
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	groups: ['Games'],
+
+	name: 'Tetris'
 } as CardDefinition & { type: 'tetris' };

@@ -8,5 +8,9 @@ export const BlueskyMediaCardDefinition = {
 	createNew: () => {},
 	creationModalComponent: CreateBlueskyMediaCardModal,
 	sidebarButtonText: 'Bluesky Media',
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	groups: ['Media'],
+
+	name: 'Video/Image from Bluesky'
 } as CardDefinition & { type: 'blueskyMedia' };

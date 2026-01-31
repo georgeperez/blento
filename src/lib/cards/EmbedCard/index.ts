@@ -19,5 +19,5 @@ export const EmbedCardDefinition = {
 	// change: (item) => {
 	// 	return item;
 	// },
-	name: 'Embed Card'
+	name: 'Embed'
 } as CardDefinition & { type: 'embed' };

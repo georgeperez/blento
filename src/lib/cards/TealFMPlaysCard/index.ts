@@ -22,5 +22,9 @@ export const TealFMPlaysCardDefinition = {
 	},
 	minW: 4,
 	sidebarButtonText: 'teal.fm Plays',
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	name: 'Teal.fm Plays',
+
+	groups: ['Media']
 } as CardDefinition & { type: 'recentTealFMPlays' };

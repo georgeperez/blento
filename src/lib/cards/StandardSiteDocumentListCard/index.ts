@@ -42,5 +42,9 @@ export const StandardSiteDocumentListCardDefinition = {
 		return records;
 	},
 
-	sidebarButtonText: 'site.standard.document list'
+	sidebarButtonText: 'site.standard.document list',
+
+	name: 'Blog Posts',
+
+	groups: ['Content']
 } as CardDefinition & { type: 'site.standard.document list' };

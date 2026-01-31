@@ -50,7 +50,9 @@ export const GithubProfileCardDefitition = {
 
 		return item;
 	},
-	name: 'Github Profile'
+	name: 'Github Profile',
+
+	groups: ['Social']
 } as CardDefinition & { type: 'githubProfile' };
 
 function getGitHubUsername(url: string | undefined): string | undefined {

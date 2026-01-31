@@ -7,7 +7,13 @@
 	import { ColorSelect } from '@foxui/colors';
 	import { AllCardDefinitions, CardDefinitionsByType, getColor } from '..';
 	import { COLUMNS } from '$lib';
-	import { getCanEdit, getIsMobile } from '$lib/website/context';
+	import {
+		getCanEdit,
+		getIsCoarse,
+		getIsMobile,
+		getSelectedCardId,
+		getSelectCard
+	} from '$lib/website/context';
 	import PlainTextEditor from '$lib/components/PlainTextEditor.svelte';
 	import { fixAllCollisions, fixCollisions } from '$lib/helper';
 
@@ -53,6 +59,12 @@
 
 	let canEdit = getCanEdit();
 	let isMobile = getIsMobile();
+	let isCoarse = getIsCoarse();
+
+	let selectedCardId = getSelectedCardId();
+	let selectCard = getSelectCard();
+	let isSelected = $derived(selectedCardId?.() === item.id);
+	let isDimmed = $derived(isCoarse?.() && selectedCardId?.() != null && !isSelected);
 
 	let colorPopoverOpen = $state(false);
 
@@ -173,13 +185,28 @@
 	{item}
 	isEditing={true}
 	bind:ref
-	showOutline={isResizing}
+	showOutline={isResizing || (isCoarse?.() && isSelected)}
 	locked={item.cardData?.locked}
-	class="scale-100 opacity-100 starting:scale-0 starting:opacity-0"
+	class={[
+		'scale-100 starting:scale-0 starting:opacity-0',
+		isCoarse?.() && isSelected ? 'ring-accent-500 z-10 ring-2 ring-offset-2' : '',
+		isDimmed ? 'opacity-70' : 'opacity-100'
+	]}
 	{...rest}
 >
-	{#if !item.cardData?.locked}
-		<div class="absolute inset-0 cursor-grab"></div>
+	{#if isCoarse?.() ? !isSelected : !item.cardData?.locked}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<div
+			role="button"
+			tabindex="-1"
+			class={['absolute inset-0', isCoarse?.() ? 'z-20 cursor-pointer' : 'cursor-grab']}
+			onclick={(e) => {
+				if (isCoarse?.()) {
+					e.stopPropagation();
+					selectCard?.(item.id);
+				}
+			}}
+		></div>
 	{/if}
 	{@render children?.()}
 
@@ -187,7 +214,7 @@
 		<div
 			class={cn(
 				'bg-base-200/50 dark:bg-base-900/50 absolute top-2 left-2 z-100 w-fit max-w-[calc(100%-1rem)] rounded-xl p-1 px-2 backdrop-blur-md',
-				!item.cardData.label && 'hidden group-hover/card:block'
+				!item.cardData.label && 'hidden lg:group-hover/card:block'
 			)}
 		>
 			<PlainTextEditor
@@ -205,7 +232,7 @@
 			{#if changeOptions.length > 1}
 				<div
 					class={[
-						'absolute -top-3 -right-3 hidden group-focus-within:inline-flex group-hover/card:inline-flex',
+						'absolute -top-3 -right-3 hidden lg:group-focus-within:inline-flex lg:group-hover/card:inline-flex',
 						changePopoverOpen ? 'inline-flex' : ''
 					]}
 				>
@@ -253,7 +280,7 @@
 				onclick={() => {
 					ondelete();
 				}}
-				class="absolute -top-3 -left-3 hidden group-focus-within:inline-flex group-hover/card:inline-flex"
+				class="absolute -top-3 -left-3 hidden lg:group-focus-within:inline-flex lg:group-hover/card:inline-flex"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +301,7 @@
 
 			<div
 				class={[
-					'absolute -bottom-7 w-full items-center justify-center text-xs group-focus-within:inline-flex group-hover/card:inline-flex',
+					'absolute -bottom-7 w-full items-center justify-center text-xs lg:group-focus-within:inline-flex lg:group-hover/card:inline-flex',
 					colorPopoverOpen || settingsPopoverOpen ? 'inline-flex' : 'hidden'
 				]}
 			>
@@ -411,7 +438,7 @@
 				<!-- Resize handle at bottom right corner -->
 				<div
 					onpointerdown={handleResizeStart}
-					class="bg-base-300/70 dark:bg-base-900/70 pointer-events-auto absolute right-0.5 bottom-0.5 hidden cursor-se-resize rounded-md rounded-br-3xl p-1 group-hover/card:block"
+					class="bg-base-300/70 dark:bg-base-900/70 pointer-events-auto absolute right-0.5 bottom-0.5 hidden cursor-se-resize rounded-md rounded-br-3xl p-1 lg:group-hover/card:block"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

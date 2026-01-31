@@ -14,5 +14,8 @@ export const DinoGameCardDefinition = {
 		card.mobileH = 6;
 		card.cardData = {};
 	},
-	canHaveLabel: true
+	canHaveLabel: true,
+
+	groups: ['Games'],
+	name: 'Dino Game'
 } as CardDefinition & { type: 'dino-game' };

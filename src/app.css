@@ -3,6 +3,10 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+
+@plugin "tailwindcss-animate";
+
+
 @source '../node_modules/@foxui';
 
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
