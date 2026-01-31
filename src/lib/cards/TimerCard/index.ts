@@ -46,4 +46,5 @@ export const TimerCardDefinition = {
 			item.cardData.label = data.label;
 		}
 	}
+
 } as CardDefinition & { type: 'timer' };
