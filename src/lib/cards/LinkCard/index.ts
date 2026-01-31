@@ -41,6 +41,7 @@ export const LinkCardDefinition = {
 	},
 	urlHandlerPriority: 0,
 
+	keywords: ['url', 'website', 'href', 'webpage'],
 	groups: ['Core'],
 
 	icon: `<svg

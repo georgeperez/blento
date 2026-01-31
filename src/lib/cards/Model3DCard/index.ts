@@ -7,8 +7,6 @@ export const Model3DCardDefinition = {
 	type: 'model3d',
 	contentComponent: Model3DCard,
 	creationModalComponent: CreateModel3DCardModal,
-	sidebarButtonText: '3D Model',
-
 	createNew: (card) => {
 		card.w = 4;
 		card.h = 4;

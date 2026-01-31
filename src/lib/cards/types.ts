@@ -13,10 +13,6 @@ export type SettingsComponentProps = {
 	onclose: () => void;
 };
 
-export type SidebarComponentProps = {
-	onclick: () => void;
-};
-
 export type ContentComponentProps = {
 	item: Item;
 	isEditing?: boolean;
@@ -32,9 +28,6 @@ export type CardDefinition = {
 	creationModalComponent?: Component<CreationModalComponentProps>;
 
 	upload?: (item: Item) => Promise<Item>; // optionally upload some other data needed for this card
-
-	// has to be set for a card to appear in the sidebar
-	sidebarButtonText?: string;
 
 	// if this component exists, a settings button with a popover will be shown containing this component
 	settingsComponent?: Component<SettingsComponentProps>;

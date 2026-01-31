@@ -8,6 +8,7 @@ type ProfileWithBlentoFlag = Awaited<ReturnType<typeof getBlentoOrBskyProfile>>;
 export const UpdatedBlentosCardDefitition = {
 	type: 'updatedBlentos',
 	contentComponent: UpdatedBlentosCard,
+	keywords: ['feed', 'updates', 'recent', 'activity'],
 	loadData: async (items, { cache }) => {
 		try {
 			const response = await fetch(

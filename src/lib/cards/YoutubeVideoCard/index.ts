@@ -55,6 +55,7 @@ export const YoutubeCardDefinition = {
 	},
 	name: 'Youtube Video',
 
+	keywords: ['video', 'yt', 'stream', 'watch'],
 	groups: ['Media'],
 
 	icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-3" viewBox="0 0 256 180"

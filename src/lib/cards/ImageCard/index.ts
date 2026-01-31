@@ -46,6 +46,7 @@ export const ImageCardDefinition = {
 
 	canHaveLabel: true,
 
+	keywords: ['photo', 'picture', 'upload', 'png', 'jpg'],
 	groups: ['Core'],
 
 	icon: `<svg

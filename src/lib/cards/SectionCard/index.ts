@@ -30,6 +30,7 @@ export const SectionCardDefinition = {
 	settingsComponent: SectionCardSettings,
 
 	name: 'Heading',
+	keywords: ['title', 'section', 'header', 'divider'],
 	groups: ['Core'],
 
 	icon: `<svg

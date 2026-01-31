@@ -15,7 +15,6 @@ import { SectionCardDefinition } from './SectionCard';
 import { UpdatedBlentosCardDefitition } from './SpecialCards/UpdatedBlentos';
 import { TextCardDefinition } from './TextCard';
 import type { CardDefinition } from './types';
-import { VideoCardDefinition } from './VideoCard';
 import { YoutubeCardDefinition } from './YoutubeVideoCard';
 import { BlueskyProfileCardDefinition } from './BlueskyProfileCard';
 import { GithubProfileCardDefitition } from './GitHubProfileCard';
@@ -35,13 +34,13 @@ import { CountdownCardDefinition } from './CountdownCard';
 import { SpotifyCardDefinition } from './SpotifyCard';
 import { ButtonCardDefinition } from './ButtonCard';
 import { GuestbookCardDefinition } from './GuestbookCard';
+import { FriendsCardDefinition } from './FriendsCard';
 // import { Model3DCardDefinition } from './Model3DCard';
 
 export const AllCardDefinitions = [
 	GuestbookCardDefinition,
 	ButtonCardDefinition,
 	ImageCardDefinition,
-	VideoCardDefinition,
 	TextCardDefinition,
 	LinkCardDefinition,
 	BigSocialCardDefinition,
@@ -51,7 +50,7 @@ export const AllCardDefinitions = [
 	LatestBlueskyPostCardDefinition,
 	LivestreamCardDefitition,
 	LivestreamEmbedCardDefitition,
-	EmbedCardDefinition,
+	// EmbedCardDefinition,
 	MapCardDefinition,
 	ATProtoCollectionsCardDefinition,
 	SectionCardDefinition,
@@ -73,8 +72,9 @@ export const AllCardDefinitions = [
 	TimerCardDefinition,
 	ClockCardDefinition,
 	CountdownCardDefinition,
-	SpotifyCardDefinition
+	SpotifyCardDefinition,
 	// Model3DCardDefinition
+	FriendsCardDefinition
 ] as const;
 
 export const CardDefinitionsByType = AllCardDefinitions.reduce(

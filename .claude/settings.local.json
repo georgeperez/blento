@@ -25,7 +25,9 @@
 			"Bash(pnpm exec svelte-kit:*)",
 			"Bash(pnpm build:*)",
 			"Bash(pnpm remove:*)",
-			"Bash(grep:*)"
+			"Bash(grep:*)",
+			"Bash(find:*)",
+			"Bash(npx prettier:*)"
 		]
 	}
 }

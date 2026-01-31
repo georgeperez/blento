@@ -29,6 +29,7 @@ export const TimerCardDefinition = {
 		} as TimerCardData;
 	},
 
+	keywords: ['stopwatch', 'clock', 'time'],
 	allowSetColor: true,
 	minW: 4,
 	canHaveLabel: true,
@@ -46,5 +47,4 @@ export const TimerCardDefinition = {
 			item.cardData.label = data.label;
 		}
 	}
-
 } as CardDefinition & { type: 'timer' };

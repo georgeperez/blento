@@ -6,7 +6,6 @@ import MapCardSettings from './MapCardSettings.svelte';
 export const MapCardDefinition = {
 	type: 'mapLocation',
 	contentComponent: MapCard,
-	sidebarButtonText: 'Map',
 	createNew: (item) => {
 		item.w = 4;
 		item.h = 4;
@@ -19,6 +18,7 @@ export const MapCardDefinition = {
 	canHaveLabel: true,
 	settingsComponent: MapCardSettings,
 
+	keywords: ['location', 'place', 'address', 'geo'],
 	groups: ['Core'],
 
 	name: 'Map',

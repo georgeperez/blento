@@ -68,6 +68,6 @@ export const PhotoGalleryCardDefinition = {
 
 		return itemsData;
 	},
+	keywords: ['album', 'photos', 'slideshow', 'images', 'carousel'],
 	minW: 4
-	//sidebarButtonText: 'Photo Gallery'
 } as CardDefinition & { type: 'photoGallery' };
